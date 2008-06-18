@@ -1,24 +1,31 @@
 package at.ac.tuwien.ir.preprocessing.impl;
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
-public class FileLineSentenceProvider 
-extends FileSentenceProvider {
+public class BufferedStreamPerLineSentenceProvider 
+extends BufferedStreamSentenceProvider {
 	
 	protected String sentence;
 
-	public FileLineSentenceProvider(File file) {
-		super(file);
+	public BufferedStreamPerLineSentenceProvider(BufferedInputStream inStream) {
+		super(inStream);
+		setSentence(null);
+	}
+	
+	public BufferedStreamPerLineSentenceProvider() {
+		super();
 		setSentence(null);
 	}
 	
 	public void init() {
 		super.init();
-		try {
-			setSentence(getIn().readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (getIn() != null) {
+			try {
+				setSentence(getIn().readLine());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
