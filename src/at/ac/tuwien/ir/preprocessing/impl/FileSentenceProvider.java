@@ -6,12 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class FileSentenceProvider 
+public abstract class FileSentenceProvider 
 extends BaseSentenceProvider {
 	
-	private File file;
-	private BufferedReader in;
-	private String sentence;
+	protected File file;
+	protected BufferedReader in;
+	protected String sentence;
 	
 	public FileSentenceProvider(File file) {
 		setFile(file);
@@ -19,16 +19,15 @@ extends BaseSentenceProvider {
 		setSentence(null);
 	}
 	
+	public abstract String getNextSentence();
+	
 	public void init() {
 		if ((!file.exists()) || (!file.isFile()) || (!file.canRead())) {
 			System.err.println("Cannot open file: " + file.getAbsolutePath());
 		}
 		try {
 			setIn(new BufferedReader(new FileReader(getFile())));
-			setSentence(getIn().readLine());
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -48,50 +47,30 @@ extends BaseSentenceProvider {
 		setSentence(null);
 	}
 	
-	public String getNextSentence() {
-		String sentence;
-		if (!isInit()) {
-			System.err.println(this.getClass().getSimpleName() + " not initialized.");
-			return null;
-		}
-		if (!hasNextSentence()) {
-			System.err.println("EOF has been reached.");
-			return null;
-		}
-		sentence = getSentence();
-		try {
-			setSentence(getIn().readLine());
-		} catch (IOException e) {
-			setSentence(null);
-			e.printStackTrace();
-		}
-		return sentence;
-	}
-	
 	public boolean hasNextSentence() {
 		return (getSentence() != null);
 	}
 	
-	private File getFile() {
+	protected File getFile() {
 		return file;
 	}
-	private void setFile(File file) {
+	protected void setFile(File file) {
 		this.file = file;
 	}
 
-	private String getSentence() {
+	protected String getSentence() {
 		return sentence;
 	}
 
-	private void setSentence(String sentence) {
+	protected void setSentence(String sentence) {
 		this.sentence = sentence;
 	}
 
-	private BufferedReader getIn() {
+	protected BufferedReader getIn() {
 		return in;
 	}
 
-	private void setIn(BufferedReader in) {
+	protected void setIn(BufferedReader in) {
 		this.in = in;
 	}
 }
