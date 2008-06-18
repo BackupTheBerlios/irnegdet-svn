@@ -50,7 +50,7 @@ extends BaseSentenceProvider {
 	
 	public String getNextSentence() {
 		String sentence;
-		if (getIn() == null) {
+		if (!isInit()) {
 			System.err.println(this.getClass().getSimpleName() + " not initialized.");
 			return null;
 		}
@@ -58,11 +58,11 @@ extends BaseSentenceProvider {
 			System.err.println("EOF has been reached.");
 			return null;
 		}
-		sentence = this.sentence;
+		sentence = getSentence();
 		try {
-			this.sentence = getIn().readLine();
+			setSentence(getIn().readLine());
 		} catch (IOException e) {
-			this.sentence = null;
+			setSentence(null);
 			e.printStackTrace();
 		}
 		return sentence;
