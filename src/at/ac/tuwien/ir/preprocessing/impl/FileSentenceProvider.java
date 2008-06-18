@@ -11,15 +11,14 @@ extends BaseSentenceProvider {
 	
 	protected File file;
 	protected BufferedReader in;
-	protected String sentence;
 	
 	public FileSentenceProvider(File file) {
 		setFile(file);
 		setIn(null);
-		setSentence(null);
 	}
 	
 	public abstract String getNextSentence();
+	public abstract boolean hasNextSentence();
 	
 	public void init() {
 		if ((!file.exists()) || (!file.isFile()) || (!file.canRead())) {
@@ -35,6 +34,7 @@ extends BaseSentenceProvider {
 	public boolean isInit() {
 		return (getIn() != null);
 	}
+	
 	public void shutdown() {
 		if (getIn() != null) {
 			try {
@@ -44,11 +44,6 @@ extends BaseSentenceProvider {
 			}
 		}
 		setIn(null);
-		setSentence(null);
-	}
-	
-	public boolean hasNextSentence() {
-		return (getSentence() != null);
 	}
 	
 	protected File getFile() {
@@ -56,14 +51,6 @@ extends BaseSentenceProvider {
 	}
 	protected void setFile(File file) {
 		this.file = file;
-	}
-
-	protected String getSentence() {
-		return sentence;
-	}
-
-	protected void setSentence(String sentence) {
-		this.sentence = sentence;
 	}
 
 	protected BufferedReader getIn() {

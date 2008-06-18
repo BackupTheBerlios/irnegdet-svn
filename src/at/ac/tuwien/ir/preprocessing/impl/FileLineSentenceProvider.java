@@ -6,8 +6,11 @@ import java.io.IOException;
 public class FileLineSentenceProvider 
 extends FileSentenceProvider {
 	
+	protected String sentence;
+
 	public FileLineSentenceProvider(File file) {
 		super(file);
+		setSentence(null);
 	}
 	
 	public void init() {
@@ -17,6 +20,10 @@ extends FileSentenceProvider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean hasNextSentence() {
+		return (getSentence() != null);
 	}
 	
 	public String getNextSentence() {
@@ -37,5 +44,18 @@ extends FileSentenceProvider {
 			e.printStackTrace();
 		}
 		return sentence;
+	}
+	
+	public void shutdown() {
+		super.shutdown();
+		setSentence(null);
+	}
+	
+	protected String getSentence() {
+		return sentence;
+	}
+
+	protected void setSentence(String sentence) {
+		this.sentence = sentence;
 	}
 }
