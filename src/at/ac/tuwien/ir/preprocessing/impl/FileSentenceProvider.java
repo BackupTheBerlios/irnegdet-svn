@@ -9,9 +9,9 @@ import java.io.IOException;
 public abstract class FileSentenceProvider 
 extends BaseSentenceProvider {
 	
-	protected File file;
-	protected BufferedReader in;
-	protected String sentence;
+	private File file;
+	private BufferedReader in;
+	private String sentence;
 	
 	public FileSentenceProvider(File file) {
 		setFile(file);
