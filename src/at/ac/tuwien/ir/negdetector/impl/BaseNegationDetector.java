@@ -5,6 +5,9 @@ import java.util.List;
 import at.ac.tuwien.ir.negdetector.NegationDetector;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.tregex.ParseException;
+import edu.stanford.nlp.trees.tregex.TregexMatcher;
+import edu.stanford.nlp.trees.tregex.TregexPattern;
 
 public abstract class BaseNegationDetector 
 implements NegationDetector {
@@ -49,6 +52,13 @@ implements NegationDetector {
 		return getParser().apply(sentence);
 	}
 
+	protected TregexMatcher getMatcher(Tree tree, String tregex) 
+	throws ParseException {
+		TregexPattern pattern = TregexPattern.compile(tregex);
+		TregexMatcher matcher = pattern.matcher(tree);
+		return matcher;
+	}
+	
 	protected LexicalizedParser getParser() {
 		return parser;
 	}

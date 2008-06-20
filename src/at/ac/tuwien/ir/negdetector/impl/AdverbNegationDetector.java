@@ -6,31 +6,34 @@ import java.util.List;
 import java.util.Map;
 
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.tregex.ParseException;
+import edu.stanford.nlp.trees.tregex.TregexMatcher;
 
 public class AdverbNegationDetector 
 extends BaseNegationDetector {
 	protected static final String[] NEG_SIGS = {
 		"not",
 		"n't",
-		"never",
-		"nevermore"
+		"never"//,
+		//"nevermore"
 	};
 	
-	private boolean isNegSignal(Tree leaf) {
-		for (int i = 0; i < NEG_SIGS.length; i++) {
-			if (leaf.label().value().equals(NEG_SIGS[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	protected List<Tree> findNegationSignal(Tree root) {
+		String tregex = "RB ";
+		TregexMatcher matcher;
 		List<Tree> negSignals = new ArrayList<Tree>();
-		List<Tree> leaves = root.getLeaves();
-		for (Tree leaf: leaves) {
-			if (isNegSignal(leaf)) {
-				negSignals.add(leaf);
+		if (NEG_SIGS.length > 0) {
+			tregex += "< " + NEG_SIGS[0];
+			for (int i = 1; i < NEG_SIGS.length; i++) {
+				tregex += " | < " + NEG_SIGS[i];
+			}
+			try {
+				matcher = getMatcher(root, tregex);
+				while(matcher.find()) {
+					negSignals.add(matcher.getMatch());
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 		}
 		return negSignals;
