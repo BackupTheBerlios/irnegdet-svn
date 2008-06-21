@@ -1,3 +1,8 @@
+There does not appear to be any signi?cant osteolysis.
+There do not seem to shine any lights.
+There did not seem to shine any lights.
+Fish do not walk, they smell.
+
 The right ovary is not seen in the toilet.
 The right ovaries are not seen in the toilet.
 The right ovaries are not going to the toilet.
@@ -5,11 +10,12 @@ The right ovary has not been seen in the toilet.
 The right ovaries have not been going in the toilet.
 The right ovary had not been seen in the toilet.
 The right ovaries had not been seen in the toilet.
-
 The right ovaries can not be seen in the toilet.
 The right ovaries must not be seen in the toilet.
 The right ovaries couldn't be seen in the toilet.
 The right ovaries wouldn't be seen in the toilet.
+The right ovary is not seen.
+The right ovary has not been seen.
 
 This is not a sentence.
 This isn't a sentence.
