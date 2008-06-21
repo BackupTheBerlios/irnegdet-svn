@@ -19,27 +19,15 @@ extends BaseNegationDetector {
 		"RB < not | < n't | < never";
 	
 	protected static final String NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE_CUT =
-		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +					// root has either VBP, VBZ, VBD or MD as subnode which has RB as immediate right neigbour which das VP as right neighbour which has either	
-			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
-			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +	// VBN respectively VB as subnode which has VP as immediate right neighbour which has VBN respectively VBG as subnode which hasn't VP as right neighbour bu some node as right neighbour which as labelled as "delete".						
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
+			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +
+			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +
 		"])))";
-		/*
-		"RB > VP $- (/VBP|VBZ|VBD|MD/) $++ (VP [" +
-			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
-			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +	// VBN respectively VB as subnode which has VP as immediate right neighbour which has VBN respectively VBG as subnode which hasn't VP as right neighbour bu some node as right neighbour which as labelled as "delete".
-		"])";
-		*/
 	protected static final String NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE_NOCUT =
-		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +		// root has either VBP, VBZ, VBD or MD as subnode which has RB as immediate right neigbour which das VP as right neighbour which has either	
-			"< (/VBN|VBG/ !$++ __) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
-			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ __)))" +		// VBN respectively VB as subnode which has VP as immediate right neighbour which has VBN respectively VBG as subnode which hasn't VP as right neighbour bu some node as right neighbour which as labelled as "delete".						
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +	
+			"< (/VBN|VBG/ !$++ __) | " +
+			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ __)))" +
 		"])))";
-		/*
-		"RB > VP $- (/VBP|VBZ|VBD|MD/) $++ (VP [" +
-			"< (/VBN|VBG/ !$++ __) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
-			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ __)))" +	// VBN respectively VB as subnode which has VP as immediate right neighbour which has VBN respectively VBG as subnode which hasn't VP as right neighbour bu some node as right neighbour which as labelled as "delete".
-		"])";
-		*/
 	
 	protected static final String NEG_PATTERN_TREGEX_BE_ADJECTIVE_CUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
@@ -47,51 +35,27 @@ extends BaseNegationDetector {
 			"$++ (VP < (VBN $+ (ADJP $++ __=cuthere))) | " +
 			"$++ (VP < (VB $+ (ADJP < (JJ $++ __=cuthere))))" +
 		"])";
-		/*
-		"RB > VP $- (/VBP|VBZ|VBD|MD/) [" +
-			"$++ (ADJP < (JJ $++ __=cuthere)) | " +
-			"$++ (VP < (VBN $+ (ADJP $++ __=cuthere))) | " +
-			"$++ (VP < (VB $+ (ADJP < (JJ $++ __=cuthere))))" +
-		"]";
-		*/
+		
 	protected static final String NEG_PATTERN_TREGEX_BE_ADJECTIVE_NOCUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
 			"$++ (ADJP < (JJ !$++ __)) | " +
 			"$++ (VP < (VBN $+ (ADJP !$++ __))) | " +
 			"$++ (VP < (VB $+ (ADJP < (JJ !$++ __))))" +
 		"])";
-		/*
-		"RB > VP $- (/VBP|VBZ|VBD|MD/) [" +
-			"$++ (ADJP < (JJ !$++ __)) | " +
-			"$++ (VP < (VBN $+ (ADJP !$++ __))) | " +
-			"$++ (VP < (VB $+ (ADJP < (JJ !$++ __))))" +
-		"]";
-		*/
+		
 	protected static final String NEG_PATTERN_TREGEX_DO_CUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP " +
 			"< VB < (S <: (VP < TO < (VP < (VB $++ __=cuthere))))" +
 		")))";
-		/*
-		"RB > VP $- (/VBP|VBZ|VBD/) $++ (VP " +
-			"< VB < (S <: (VP < TO < (VP < (VB $++ __=cuthere))))" +
-		")";
-		*/
+		
 	protected static final String NEG_PATTERN_TREGEX_DO_NOCUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
 			"<: VB | " +
 			"< VB < (S <: (VP < TO < (VP < (VB !$++ __))))" +
 		"])))";
-		/*
-		"RB > VP $- (/VBP|VBZ|VBD/) $++ (VP [" +
-			"<: VB | " +
-			"< VB < (S <: (VP < TO < (VP < (VB !$++ __))))" +
-		"])";
-		*/
+		
 	protected static final String NEG_PATTERN_SURGOP =
 		"delete cuthere";
-
-	protected static final String NEG_PHRASE_TREGEX =
-		"";
 	
 	protected List<Tree> findNegationSignal(Tree root) {
 		TregexMatcher matcher;
