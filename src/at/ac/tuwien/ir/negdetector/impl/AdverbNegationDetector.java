@@ -20,13 +20,12 @@ extends BaseNegationDetector {
 	
 	protected static final String NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE_CUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +					// root has either VBP, VBZ, VBD or MD as subnode which has RB as immediate right neigbour which das VP as right neighbour which has either	
-			"< (/VBN|VBG/ !$++ VP $++ __=cuthere) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
+			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
 			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +	// VBN respectively VB as subnode which has VP as immediate right neighbour which has VBN respectively VBG as subnode which hasn't VP as right neighbour bu some node as right neighbour which as labelled as "delete".						
 		"])))";
-		
 		/*
 		"RB > VP $- (/VBP|VBZ|VBD|MD/) $++ (VP [" +
-			"< (/VBN|VBG/ !$++ VP $++ __=cuthere) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
+			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +						// VBN respectively VBG as subnode which hasn't VP as right neighbour but some node as right neighbour which is labelled as "delete" or
 			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +	// VBN respectively VB as subnode which has VP as immediate right neighbour which has VBN respectively VBG as subnode which hasn't VP as right neighbour bu some node as right neighbour which as labelled as "delete".
 		"])";
 		*/
@@ -43,10 +42,31 @@ extends BaseNegationDetector {
 		*/
 	
 	protected static final String NEG_PATTERN_TREGEX_BE_ADJECTIVE_CUT =
-		"RB > VP";
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
+			"$++ (ADJP < (JJ $++ __=cuthere)) | " +
+			"$++ (VP < (VBN $+ (ADJP $++ __=cuthere))) | " +
+			"$++ (VP < (VB $+ (ADJP < (JJ $++ __=cuthere))))" +
+		"])";
+		/*
+		"RB > VP $- (/VBP|VBZ|VBD|MD/) [" +
+			"$++ (ADJP < (JJ $++ __=cuthere)) | " +
+			"$++ (VP < (VBN $+ (ADJP $++ __=cuthere))) | " +
+			"$++ (VP < (VB $+ (ADJP < (JJ $++ __=cuthere))))" +
+		"]";
+		*/
 	protected static final String NEG_PATTERN_TREGEX_BE_ADJECTIVE_NOCUT =
-		"RB > VP";
-	
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
+			"$++ (ADJP < (JJ !$++ __)) | " +
+			"$++ (VP < (VBN $+ (ADJP !$++ __))) | " +
+			"$++ (VP < (VB $+ (ADJP < (JJ !$++ __))))" +
+		"])";
+		/*
+		"RB > VP $- (/VBP|VBZ|VBD|MD/) [" +
+			"$++ (ADJP < (JJ !$++ __)) | " +
+			"$++ (VP < (VBN $+ (ADJP !$++ __))) | " +
+			"$++ (VP < (VB $+ (ADJP < (JJ !$++ __))))" +
+		"]";
+		*/
 	protected static final String NEG_PATTERN_TREGEX_DO_CUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP " +
 			"< VB < (S <: (VP < TO < (VP < (VB $++ __=cuthere))))" +
@@ -56,7 +76,7 @@ extends BaseNegationDetector {
 			"< VB < (S <: (VP < TO < (VP < (VB $++ __=cuthere))))" +
 		")";
 		*/
-	protected static final String NEG_PATTERN_TREGEX_DO_NOCUT = 
+	protected static final String NEG_PATTERN_TREGEX_DO_NOCUT =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
 			"<: VB | " +
 			"< VB < (S <: (VP < TO < (VP < (VB !$++ __))))" +
@@ -112,14 +132,12 @@ extends BaseNegationDetector {
 						Tsurgeon.parseOperation(NEG_PATTERN_SURGOP));
 				cutPatterns.add(patternBeVerbPastParticiple);
 			}
-			/*
 			if (matchNegationPattern(negSignal, vpRoot, NEG_PATTERN_TREGEX_BE_ADJECTIVE_CUT) != null) {
 				Pair<TregexPattern, TsurgeonPattern> patternBeAdjective = new Pair<TregexPattern, TsurgeonPattern>(
 						TregexPattern.compile(NEG_PATTERN_TREGEX_BE_ADJECTIVE_CUT), 
 						Tsurgeon.parseOperation(NEG_PATTERN_SURGOP));
 				cutPatterns.add(patternBeAdjective);
 			}
-			*/
 			if (matchNegationPattern(negSignal, vpRoot, NEG_PATTERN_TREGEX_DO_CUT) != null) {
 				Pair<TregexPattern, TsurgeonPattern> patternDo = new Pair<TregexPattern, TsurgeonPattern>(
 						TregexPattern.compile(NEG_PATTERN_TREGEX_DO_CUT), 
@@ -135,7 +153,7 @@ extends BaseNegationDetector {
 			negPattern = Tsurgeon.processPatternsOnTree(cutPatterns, vpRoot);
 			
 		} else if (	((negPattern = matchNegationPattern(negSignal, vpRoot, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE_NOCUT)) == null) &&
-					//((negPattern = matchNegationPattern(negSignal, vpRoot, NEG_PATTERN_TREGEX_BE_ADJECTIVE_NOCUT)) == null) &&
+					((negPattern = matchNegationPattern(negSignal, vpRoot, NEG_PATTERN_TREGEX_BE_ADJECTIVE_NOCUT)) == null) &&
 					((negPattern = matchNegationPattern(negSignal, vpRoot, NEG_PATTERN_TREGEX_DO_NOCUT)) == null)
 				  ) {
 			System.err.println("Warning: Not match found for negation.");
