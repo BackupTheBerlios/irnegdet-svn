@@ -24,9 +24,8 @@ public class InformalNegationDetectionTest {
 			sentence = provider.getNextSentence();
 			tree = detector.parseSentence(sentence);
 			tree.pennPrint();
-			//tree = tree.flatten();
-			//tree.pennPrint();
 			detector.detectNegation(tree);
+			System.out.println();
 		}
 		
 		provider.shutdown();

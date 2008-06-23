@@ -1,39 +1,49 @@
-The previously identi?ed isoechoic nodule is not present on the current examination.
-The previously identi?ed isoechoic nodules are not present on the current examination.
-The previously identi?ed isoechoic nodule has not been present on the current examination.
-The previously identi?ed isoechoic nodules have not been present on the current examination.
-The previously identi?ed isoechoic nodule had not been present on the current examination.
-The previously identi?ed isoechoic nodule can not be present on the current examination.
-The previously identi?ed isoechoic nodule must not be present on the current examination.
-The previously identi?ed isoechoic nodule couldn't be present on the current examination.
-The previously identi?ed isoechoic nodule wouldn't be present on the current examination.
-The previously identi?ed isoechoic nodule is not present.
-The previously identi?ed isoechoic nodule has not been present.
+Fish do not walk, they smell.
+The carefully painted blue dog on the right, larger than 7mm, is not present on the colourful grass at any time.
+The right hand is not seen in the toilet.
+The right hands are not seen in the toilet.
+The right hands are not going to the toilet.
+The right hand has not been seen in the toilet.
+The right hands have not been going in the toilet.
+The right hand had not been seen in the toilet.
+The right hands had not been seen in the toilet.
+The right hands can not be seen in the toilet.
+The right hands must not be seen in the toilet.
+The right hands couldn't be seen in the toilet.
+The right hands wouldn't be seen in the toilet.
+The right hand is not seen.
+The right hand has not been seen.
 
-The right ovary is not seen in the toilet.
-The right ovaries are not seen in the toilet.
-The right ovaries are not going to the toilet.
-The right ovary has not been seen in the toilet.
-The right ovaries have not been going in the toilet.
-The right ovary had not been seen in the toilet.
-The right ovaries had not been seen in the toilet.
-The right ovaries can not be seen in the toilet.
-The right ovaries must not be seen in the toilet.
-The right ovaries couldn't be seen in the toilet.
-The right ovaries wouldn't be seen in the toilet.
-The right ovary is not seen.
-The right ovary has not been seen.
+The carefully painted blue dog is not present on the colourful grass at any time.
+The carefully painted blue dogs are not present on the colourful grass at any time.
+The carefully painted blue dog has not been present on the colourful grass at any time.
+The carefully painted blue dogs have not been present on the colourful grass at any time.
+The carefully painted blue dogs had not been present on the colourful grass at any time.
+The carefully painted blue dogs cannot be present on the colourful grass at any time.
+The carefully painted blue dogs must not be present on the colourful grass at any time.
+The carefully painted blue dogs couldn't be present on the colourful grass at any time.
+The carefully painted blue dogs would not be present on the colourful grass at any time.
+The carefully painted blue dogs is not present.
+The carefully painted blue dogs has not been present.
+The carefully painted blue dog on the right, larger than 7mm, is not present on the colourful grass at any time.
+There hasn't been present any carefully painted blue dog on the colourful grass at any time.
 
 There does not appear to be any signi?cant osteolysis.
 There do not seem to shine any lights.
 There did not seem to shine any lights.
 Fish do not walk, they smell.
 
+
+
+
+
+
+
 This is not a sentence.
 This isn't a sentence.
 This is never ot a sentence.
 This is nevermore a sentence.
-The previously identi?ed isoechoic nodule is not present on the current examination.
+	
 There does not appear to be any signi?cant osteolysis.
 For most major cities, two nights is not enough as it doesn't leave only one full day for exploration.
 While General Re, unlike Dexter, is not going away any time soon, it has caused this kind of aggravation.
