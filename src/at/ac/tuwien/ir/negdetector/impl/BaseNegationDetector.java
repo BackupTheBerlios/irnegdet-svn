@@ -21,8 +21,8 @@ implements NegationDetector {
 	
 	public abstract List<Tree> detectNegation(Tree root);
 	protected abstract List<Tree> findNegationSignal(Tree root);
-	protected abstract Tree findNegationPattern(Tree negSignal, Tree root);
-	protected abstract Tree findNegatedPhrase(Tree negSignal, Tree root);
+	protected abstract List<Tree> findNegationPatterns(Tree negSignal, Tree root);
+	protected abstract List<Tree> findNegatedPhrase(Tree negSignal, Tree root);
 	
 	public BaseNegationDetector() {
 		setParser(null);

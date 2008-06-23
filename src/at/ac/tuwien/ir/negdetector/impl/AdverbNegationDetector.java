@@ -26,7 +26,8 @@ extends BaseNegationDetector {
 	};
 	protected static final String NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE = 
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +	
-			"< (/VBN|VBG/) | " +
+			//"< /VBN|VBG/ | " +
+			"< (/VBN|VBG/ !$++ ADJP) | " +
 			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/)))" +
 		"])))";
 	
@@ -50,31 +51,52 @@ extends BaseNegationDetector {
 		"])";
 		
 	protected static final String[] NEG_PATTERN_TREGEX_CUT_DO = {
-		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP " +
-			"< VB < (S <: (VP < TO < (VP < (VB $++ __=cuthere))))" +
-		")))"
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP < (VB [" +
+			"$+ (S <: (VP < TO < (VP < (VB $++ __=cuthere)))) | " +
+			"!$+ S !$++ VP $++ __=cuthere" +
+		"]))))"
 	};
 		
 	protected static final String NEG_PATTERN_TREGEX_DO =
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
 			"<: VB | " +
+			"< (VB !$++ VP !$++ ADJP)" +
+		"])))";
+		/*
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
+			"<: VB | " +
 			"< VB < (S <: (VP < TO < (VP < VB)))" +
 		"])))";
-	
+		*/
 	protected static final String NEG_PHRASE_TREGEX =
 		"NP !<< NP [" +
-			"!<< EX ! >> VP >> (S << (VP < RB)) | " +
-			">> (VP < RB > S $-- (NP <: EX))" +
+			"!<< EX !>> VP !,, NP >> (S << (VP < RB)) | " +
+			"!>> PP >> (VP < RB > S $-- (NP <: EX))" +
 		"]";
 
 	protected static final String NEG_PATTERN_SURGOP =
 		"delete cuthere";
 	
 	protected List<Tree> findNegationSignal(Tree root) {
+		List<Tree> negSignals = getMatches(root, NEG_SIG_TREGEX);
+		return negSignals;
+	}
+	
+	protected boolean hasMatches(Tree root, final String tregex) {
+		TregexMatcher matcher = null;
+		try {
+			matcher = getMatcher(root, tregex);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return matcher.find();
+	}
+	
+	protected List<Tree> getMatches(Tree root, final String tregex) {
 		TregexMatcher matcher;
 		List<Tree> negSignals = new ArrayList<Tree>();
 		try {
-			matcher = getMatcher(root, NEG_SIG_TREGEX);
+			matcher = getMatcher(root, tregex);
 			while(matcher.find()) {
 				if (! negSignals.contains(matcher.getMatch())) {
 					negSignals.add(matcher.getMatch());
@@ -86,27 +108,14 @@ extends BaseNegationDetector {
 		return negSignals;
 	}
 	
-	protected Tree getFirstPatternMatch(Tree negSignal, Tree root, final String pattern) {
-		TregexMatcher matcher;
-		try {
-			matcher = getMatcher(root, pattern);
-			if (matcher.find()) {
-				return matcher.getMatch();
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	private List<Pair<TregexPattern, TsurgeonPattern>> fillCutPatterns(
-				List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns, Tree negSignal, Tree root, 
+				List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns, Tree root, 
 				final String tregexPattern, final String[] tregexCutPattern, final String surgopPattern) 
 	throws ParseException {
-		if (getFirstPatternMatch(negSignal, root, tregexPattern) != null) {
+		if (hasMatches(root, tregexPattern)) {
 			if (cutPatterns.size() < 1) {
 				for (int i = 0; i < tregexCutPattern.length; i++) {
-					if (getFirstPatternMatch(negSignal, root, tregexCutPattern[i]) != null) {
+					if (hasMatches(root, tregexCutPattern[i])) {
 						Pair<TregexPattern, TsurgeonPattern> patternBeVerbPastParticiple = new Pair<TregexPattern, TsurgeonPattern>(
 								TregexPattern.compile(tregexCutPattern[i]), 
 								Tsurgeon.parseOperation(surgopPattern));
@@ -119,20 +128,29 @@ extends BaseNegationDetector {
 		}
 		return cutPatterns;
 	}
-	protected Tree findNegationPattern(Tree negSignal, Tree root) {
-		Tree negPattern = null;
+	private List<Tree> fillNegationsPatterns(List<Tree> negPatterns, Tree root, final String tregex) {
+		if (hasMatches(root, tregex)) {
+			if (negPatterns.size() > 0) {
+				System.err.println("Warning: More than one negation pattern was found. This is unusual and should not happen.");
+			}
+			negPatterns.addAll(getMatches(root, tregex));
+		}
+		return negPatterns;
+	}
+	protected List<Tree> findNegationPatterns(Tree negSignal, Tree root) {
+		List<Tree> negPatterns = new ArrayList<Tree>();
 		List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>();
 		Tree vpRoot = negSignal.parent(root).deepCopy();
 		try {
-			cutPatterns = fillCutPatterns(cutPatterns, negSignal, vpRoot,
+			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
 					NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE,
 					NEG_PATTERN_TREGEX_CUT_BE_VERB_PAST_PARTICIPLE,
 					NEG_PATTERN_SURGOP);
-			cutPatterns = fillCutPatterns(cutPatterns, negSignal, vpRoot,
+			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
 					NEG_PATTERN_TREGEX_BE_ADJECTIVE,
 					NEG_PATTERN_TREGEX_CUT_BE_ADJECTIVE,
 					NEG_PATTERN_SURGOP);
-			cutPatterns = fillCutPatterns(cutPatterns, negSignal, vpRoot,
+			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
 					NEG_PATTERN_TREGEX_DO,
 					NEG_PATTERN_TREGEX_CUT_DO,
 					NEG_PATTERN_SURGOP);
@@ -141,39 +159,51 @@ extends BaseNegationDetector {
 		}
 
 		if (cutPatterns.size() > 0) {
-			negPattern = Tsurgeon.processPatternsOnTree(cutPatterns, vpRoot);
+			negPatterns.add(Tsurgeon.processPatternsOnTree(cutPatterns, vpRoot));
 		} else {
-			if (((negPattern = getFirstPatternMatch(negSignal, vpRoot, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE)) == null) &&
-				((negPattern = getFirstPatternMatch(negSignal, vpRoot, NEG_PATTERN_TREGEX_BE_ADJECTIVE)) == null) &&
-				((negPattern = getFirstPatternMatch(negSignal, vpRoot, NEG_PATTERN_TREGEX_DO)) == null)) {
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, NEG_PATTERN_TREGEX_BE_ADJECTIVE);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, NEG_PATTERN_TREGEX_DO);
+			if (negPatterns.size() < 1) {
 				System.err.println("Warning: No negation pattern found.");
 			}
 		}
-if (negPattern != null)
-negPattern.pennPrint();
-		return negPattern;
+if (negPatterns.size() > 0)
+negPatterns.get(0).pennPrint();
+		return negPatterns;
 	}	
 	
-	protected Tree findNegatedPhrase(Tree negSignal, Tree root) {
-		Tree negPhrase = null;
+	protected List<Tree> findNegatedPhrase(Tree negSignal, Tree root) {
+		List<Tree> negPhrases = new ArrayList<Tree>();
 		Tree sRoot = negSignal.parent(root).parent(root).deepCopy();
-		if ((negPhrase = getFirstPatternMatch(negSignal, sRoot, NEG_PHRASE_TREGEX)) == null) {
+		negPhrases = getMatches(sRoot, NEG_PHRASE_TREGEX);
+		if (negPhrases.size() > 1) {
+			System.err.println("Warning: More than one negated phrase was found. This is unusual and should not happen.");
+		} else if (negPhrases.size() < 1) {
 			System.err.println("Warning: No negation phrase found.");
 		}
-if (negPhrase != null)
-negPhrase.pennPrint();
-		return negPhrase;
+if (negPhrases.size() > 0)
+negPhrases.get(0).pennPrint();
+		return negPhrases;
 	}
 	
 	public List<Tree> detectNegation(Tree root) {
 		List<Tree> negSignals = findNegationSignal(root);
 		Map<Tree, Tree> negPatterns = new HashMap<Tree, Tree>();
+		List<Tree> retNegPatterns;
+		List<Tree> retNegPhrases;
 		for (Tree negSignal: negSignals) {
-			negPatterns.put(negSignal, findNegationPattern(negSignal, root));
+			retNegPatterns = findNegationPatterns(negSignal, root);
+			if (retNegPatterns.size() > 0) {
+				negPatterns.put(negSignal, retNegPatterns.get(0));
+			}
 		}
 		Map<Tree, Tree> negPhrases = new HashMap<Tree, Tree>();
 		for (Tree negSignal: negSignals) {
-			negPhrases.put(negSignal, findNegatedPhrase(negSignal, root));
+			retNegPhrases = findNegatedPhrase(negSignal, root);
+			if (retNegPhrases.size() > 0) {
+				negPhrases.put(negSignal, retNegPhrases.get(0));
+			}
 		}
 		return null;
 	}
