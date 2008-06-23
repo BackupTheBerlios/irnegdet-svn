@@ -1,3 +1,4 @@
+The right hand is not seen in the toilet as it should.
 The right hand is not seen in the toilet.
 The right hands are not seen in the toilet.
 The right hands are not going to the toilet.
@@ -32,5 +33,5 @@ There do not seem to shine any lights.
 There did not seem to shine any lights.
 Fish do not walk, they smell.
 	
-For most major cities, two nights is enough as it doesn't leave only one full day for exploration.
+For most major cities, two nights is not enough as it doesn't leave only one full day for exploration.
 While General Re, unlike Dexter, is not going away any time soon, it has caused this kind of aggravation.

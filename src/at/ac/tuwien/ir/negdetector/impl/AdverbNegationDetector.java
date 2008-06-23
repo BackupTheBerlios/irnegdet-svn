@@ -22,7 +22,9 @@ extends BaseNegationDetector {
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
 			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +
 			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +
-		"])))"
+		"])))",
+		
+		"(VP !> __) << SBAR=cuthere"
 	};
 	protected static final String NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE = 
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +	
@@ -40,7 +42,9 @@ extends BaseNegationDetector {
 		
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
 			"$++ (VP < (VBN $+ (ADJP < (JJ $++ __=cuthere))))" +
-		"])"
+		"])",
+		
+		"(VP !> __) << SBAR=cuthere"
 	};
 		
 	protected static final String NEG_PATTERN_TREGEX_BE_ADJECTIVE =
@@ -54,7 +58,9 @@ extends BaseNegationDetector {
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP < (VB [" +
 			"$+ (S <: (VP < TO < (VP < (VB $++ __=cuthere)))) | " +
 			"!$+ S !$++ VP $++ __=cuthere" +
-		"]))))"
+		"]))))",
+		
+		"(VP !> __) << SBAR=cuthere"
 	};
 		
 	protected static final String NEG_PATTERN_TREGEX_DO =
