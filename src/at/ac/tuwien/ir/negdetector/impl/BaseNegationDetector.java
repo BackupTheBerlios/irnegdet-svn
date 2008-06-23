@@ -2,6 +2,7 @@ package at.ac.tuwien.ir.negdetector.impl;
 
 import java.util.List;
 
+import at.ac.tuwien.ir.negdetector.NegationData;
 import at.ac.tuwien.ir.negdetector.NegationDetector;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.Tree;
@@ -19,7 +20,7 @@ implements NegationDetector {
 	};
 	private LexicalizedParser parser;
 	
-	public abstract List<Tree> detectNegation(Tree root);
+	public abstract NegationData detectNegation(Tree root);
 	protected abstract List<Tree> findNegationSignal(Tree root);
 	protected abstract List<Tree> findNegationPatterns(Tree negSignal, Tree root);
 	protected abstract List<Tree> findNegatedPhrase(Tree negSignal, Tree root);

@@ -1,10 +1,9 @@
 package at.ac.tuwien.ir.negdetector.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import at.ac.tuwien.ir.negdetector.NegationData;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.ParseException;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
@@ -16,7 +15,7 @@ import edu.stanford.nlp.util.Pair;
 public class AdverbNegationDetector 
 extends BaseNegationDetector {
 	protected static final String NEG_SIG_TREGEX =
-		"RB >> S < not | < n't | < never";
+		"RB >> S !$++ NP < not | < n't | < never";
 	
 	protected static final String[] NEG_PATTERN_TREGEX_CUT_BE_VERB_PAST_PARTICIPLE = {
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
@@ -193,24 +192,18 @@ negPhrases.get(0).pennPrint();
 		return negPhrases;
 	}
 	
-	public List<Tree> detectNegation(Tree root) {
+	public NegationData detectNegation(Tree root) {
+		List<Tree> negPatterns;
+		List<Tree> negPhrases;
+		NegationData negData = new NegationData(root);
+		
 		List<Tree> negSignals = findNegationSignal(root);
-		Map<Tree, Tree> negPatterns = new HashMap<Tree, Tree>();
-		List<Tree> retNegPatterns;
-		List<Tree> retNegPhrases;
+		
 		for (Tree negSignal: negSignals) {
-			retNegPatterns = findNegationPatterns(negSignal, root);
-			if (retNegPatterns.size() > 0) {
-				negPatterns.put(negSignal, retNegPatterns.get(0));
-			}
+			negPatterns = findNegationPatterns(negSignal, root);
+			negPhrases = findNegatedPhrase(negSignal, root);
+			negData.addNegationSignal(negSignal, negPatterns, negPhrases);
 		}
-		Map<Tree, Tree> negPhrases = new HashMap<Tree, Tree>();
-		for (Tree negSignal: negSignals) {
-			retNegPhrases = findNegatedPhrase(negSignal, root);
-			if (retNegPhrases.size() > 0) {
-				negPhrases.put(negSignal, retNegPhrases.get(0));
-			}
-		}
-		return null;
+		return negData;
 	}
 }
