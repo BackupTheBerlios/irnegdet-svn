@@ -20,12 +20,50 @@ public class NegationData {
 		setNegationPatterns(new HashMap<Tree, List<Tree>>());
 		setNegatedPhrases(new HashMap<Tree, List<Tree>>());
 	}
+	private boolean isLeafInRoot(Tree leaf) {
+		List<Tree> rootLeaves = root.getLeaves();
+		for (Tree rootLeaf: rootLeaves) {
+			if (rootLeaf.label().equals(leaf.label())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean areAllLeavesInRoot(Tree tree) {
+		List<Tree> treeLeaves = tree.getLeaves();
+		for (Tree treeLeaf: treeLeaves) {
+			if (! isLeafInRoot(treeLeaf)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	private boolean areAllLeavesInRoot(List<Tree> tList) {
+		for (Tree tree: tList) {
+			if (!areAllLeavesInRoot(tree)) {
+				return false;
+			}
+		}
+		return true;
+	}
 	public boolean addNegationSignal(Tree negSignal, List<Tree> negationPatterns, List<Tree> negatedPhrases) {
 		if (root == null) {
 			System.err.println("Root tree must be set.");
 			return false;
 		}
 		if (negationSignals.contains(negSignal)) {
+			return false;
+		}
+		if (!areAllLeavesInRoot(negSignal)) {
+			System.err.println("Negation Signal not in root tree.");
+			return false;
+		}
+		if (!areAllLeavesInRoot(negationPatterns)) {
+			System.err.println("Negation Pattern not in root tree.");
+			return false;
+		}
+		if (!areAllLeavesInRoot(negatedPhrases)) {
+			System.err.println("Negated Phrase not in root tree.");
 			return false;
 		}
 		getNegationSignals().add(negSignal);
