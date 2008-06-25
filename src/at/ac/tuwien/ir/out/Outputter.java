@@ -1,12 +1,12 @@
 package at.ac.tuwien.ir.out;
 
-import java.io.PrintStream;
-import java.util.List;
+import at.ac.tuwien.ir.negdetector.NegationData;
 
-import edu.stanford.nlp.trees.Tree;
 
 public interface Outputter {
 
-	public void init(List<Tree> trees);
-	public void write(PrintStream out);
+	public void init(NegationData negData);
+	public boolean isInit();
+	public void write();
+	public void shutdown();
 }

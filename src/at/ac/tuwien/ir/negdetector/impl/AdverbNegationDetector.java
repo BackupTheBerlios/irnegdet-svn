@@ -18,19 +18,19 @@ extends BaseNegationDetector {
 		"RB >> S !$++ NP < not | < n't | < never";
 	
 	protected static final String[] NEG_PATTERN_TREGEX_CUT_BE_VERB_PAST_PARTICIPLE = {
-		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +
-			"< (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere) | " +
-			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere)))" +
-		"])))",
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
+			"$++ (VP < (/VBN|VBG/ !$++ VP !$++ ADJP $++ __=cuthere)) | " +
+			"$++ (VP < (/VBN|VB/ $+ (VP < (/VB(N|G)/ !$++ VP $++ __=cuthere))))" +
+		"])",
 		
 		"(VP !> __) << SBAR=cuthere"
 	};
 	protected static final String NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE = 
-		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP [" +	
-			//"< /VBN|VBG/ | " +
-			"< (/VBN|VBG/ !$++ ADJP) | " +
-			"< (/VBN|VB/ $+ (VP < (/VB(N|G)/)))" +
-		"])))";
+		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +	
+			"$++ (VP < (/VBN|VBG/ !$++ ADJP)) | " +
+			"$++ (VP < (/VBN|VB/ $+ (VP < (/VB(N|G)/))))" +
+			//"$++ (ADJP)" +
+		"])";
 	
 	protected static final String[] NEG_PATTERN_TREGEX_CUT_BE_ADJECTIVE = {
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
@@ -39,11 +39,11 @@ extends BaseNegationDetector {
 			"$++ (VP < (VB $+ (ADJP < (JJ $++ __=cuthere))))" +
 		"])",
 		
+		"(VP !> __) << SBAR=cuthere",
+		
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +
 			"$++ (VP < (VBN $+ (ADJP < (JJ $++ __=cuthere))))" +
-		"])",
-		
-		"(VP !> __) << SBAR=cuthere"
+		"])"
 	};
 		
 	protected static final String NEG_PATTERN_TREGEX_BE_ADJECTIVE =
@@ -55,7 +55,7 @@ extends BaseNegationDetector {
 		
 	protected static final String[] NEG_PATTERN_TREGEX_CUT_DO = {
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ $+ (RB $++ (VP < (VB [" +
-			"$+ (S <: (VP < TO < (VP < (VB $++ __=cuthere)))) | " +
+			"$+ (S < (VP < TO < (VP < (VB $++ __=cuthere)))) | " +
 			"!$+ S !$++ VP $++ __=cuthere" +
 		"]))))",
 		
@@ -75,7 +75,7 @@ extends BaseNegationDetector {
 		*/
 	protected static final String NEG_PHRASE_TREGEX =
 		"NP !<< NP [" +
-			"!<< EX !>> VP !,, NP >> (S << (VP < RB)) | " +
+			"!<< EX !>> VP [!,, NP | ,, S | ,, /,/] >+(NP) (S << (VP < RB)) | " +
 			"!>> PP >> (VP < RB > S $-- (NP <: EX))" +
 		"]";
 
@@ -96,14 +96,21 @@ extends BaseNegationDetector {
 		}
 		return matcher.find();
 	}
-	
+	private boolean isInList(List<Tree> trees, Tree tree, Tree root) {
+		for (Tree curTree: trees) {
+			if (curTree.nodeNumber(root) == tree.nodeNumber(root)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	protected List<Tree> getMatches(Tree root, final String tregex) {
 		TregexMatcher matcher;
 		List<Tree> negSignals = new ArrayList<Tree>();
 		try {
 			matcher = getMatcher(root, tregex);
 			while(matcher.find()) {
-				if (! negSignals.contains(matcher.getMatch())) {
+				if (! isInList(negSignals, matcher.getMatch(), root)) {
 					negSignals.add(matcher.getMatch());
 				}
 			}
@@ -145,7 +152,15 @@ extends BaseNegationDetector {
 	protected List<Tree> findNegationPatterns(Tree negSignal, Tree root) {
 		List<Tree> negPatterns = new ArrayList<Tree>();
 		List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>();
-		Tree vpRoot = negSignal.parent(root).deepCopy();
+		Tree vpRoot = negSignal;
+		while (!vpRoot.label().value().equals("VP")) {
+			vpRoot = vpRoot.parent(root);
+			if (vpRoot == null) {
+				vpRoot = negSignal;
+				break;
+			}
+		}
+		vpRoot = vpRoot.deepCopy();
 		try {
 			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
 					NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE,
@@ -180,7 +195,15 @@ negPatterns.get(0).pennPrint();
 	
 	protected List<Tree> findNegatedPhrase(Tree negSignal, Tree root) {
 		List<Tree> negPhrases = new ArrayList<Tree>();
-		Tree sRoot = negSignal.parent(root).parent(root).deepCopy();
+		Tree sRoot = negSignal;
+		while (!sRoot.label().value().equals("S")) {
+			sRoot = sRoot.parent(root);
+			if (sRoot == null) {
+				sRoot = negSignal;
+				break;
+			}
+		}
+		sRoot = sRoot.deepCopy();
 		negPhrases = getMatches(sRoot, NEG_PHRASE_TREGEX);
 		if (negPhrases.size() > 1) {
 			System.err.println("Warning: More than one negated phrase was found. This is unusual and should not happen.");

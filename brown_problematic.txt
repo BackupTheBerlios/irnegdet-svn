@@ -1,0 +1,28 @@
+The campaign leading to the election was not so quiet, however.
+	-- The ",however" confuses the parser.
+He also complained that not enough notice was given on the hearing, since the bill was introduced only last Monday
+	-- "not enough notice" has quite a different pattern. Is it an adverb negation?
+A person with a master's degree in physics, chemistry, math or English, yet who has not taken Education courses, is not permitted to teach in the public schools, said Grover.
+	-- exception. 
+Wouldn't pay doctors the plan does not cover doctor bills.
+	-- exception - strange sentence
+This atmosphere of understanding has been particularly noticeable where relations are concerned between the colonialist powers and those who have never, or not for a long time, had such problems.
+	-- difficult sentence
+This atmosphere of understanding has been particularly noticeable where relations are concerned between the colonialist powers and those who have never, or not for a long time, had such problems.
+	-- difficult nested sentence
+The council advised the governor that large supermarkets, factory outlets and department stores not be allowed to do business on Sunday.
+	-- difficult sentence as there are indeed more than one subject
+They operate on a volume basis, it was contended, and are not essential to provide the more limited but vital shopping needs of the community.
+	-- difficult word-order as subject is missing in the subclause
+But I am not in favor of a sales or state income tax at this time, Mitchell said.
+	-- to be in favor of is an exception...
+He said you're the kind of governor we're glad we, we Democrats must resolve our issues on the test of what is right and just, and not what is expedient at the time.
+	-- difficult nested sentence
+Each ally will have to carry out obligations long since laid down, but never completely fulfilled.
+	-- really an adverb negation?
+But the Communists never gave sufficient provocation at any one time for the United States to want to risk a limited or an all-out war over Laos.
+	-- TODO!!!
+The pro-*western government, which the United States had helped in a revolt against the Souvanna Phouma neutralist government, never did appear to spark much fighting spirit in the Royal Lao Army.
+	-- TODO!!!
+There wasn't a bit of trouble.
+	-- Really an adverb negation?

@@ -11,7 +11,7 @@ public class InformalPreprocessingTester {
 	 */
 	public static void main(String[] args) {
 		String line;
-		PerLineSentenceProvider provider = new PerLineSentenceProvider(new File("./sentences.txt"));
+		PerLineSentenceProvider provider = new PerLineSentenceProvider(new File("./brown_neg.txt"));
 		provider.init();
 		while(provider.hasNextSentence()) {
 			line = provider.getNextSentence();
