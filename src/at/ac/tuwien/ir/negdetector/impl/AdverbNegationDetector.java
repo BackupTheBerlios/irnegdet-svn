@@ -135,7 +135,7 @@ extends BaseNegationDetector {
 					}
 				}
 			} else {
-				System.err.println("Warning: More than one negation pattern was found. This is unusual and should not happen.");
+				System.err.println("Warning: More than one pattern for the negation pattern applied.");
 			}
 		}
 		return cutPatterns;
@@ -143,7 +143,7 @@ extends BaseNegationDetector {
 	private List<Tree> fillNegationsPatterns(List<Tree> negPatterns, Tree root, final String tregex) {
 		if (hasMatches(root, tregex)) {
 			if (negPatterns.size() > 0) {
-				System.err.println("Warning: More than one negation pattern was found. This is unusual and should not happen.");
+				System.err.println("Warning: More than one pattern for the negation pattern applied.");
 			}
 			negPatterns.addAll(getMatches(root, tregex));
 		}
@@ -206,7 +206,7 @@ negPatterns.get(0).pennPrint();
 		sRoot = sRoot.deepCopy();
 		negPhrases = getMatches(sRoot, NEG_PHRASE_TREGEX);
 		if (negPhrases.size() > 1) {
-			System.err.println("Warning: More than one negated phrase was found. This is unusual and should not happen.");
+			System.err.println("Warning: More than one negated phrase was found.");
 		} else if (negPhrases.size() < 1) {
 			System.err.println("Warning: No negation phrase found.");
 		}
