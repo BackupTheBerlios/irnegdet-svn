@@ -9,7 +9,11 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.ParseException;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
-
+/**
+ * The base class for the NegationDetector. It holds some standard-values and implements some basic methods.
+ * @author Andreas Bernauer
+ *
+ */
 public abstract class BaseNegationDetector 
 implements NegationDetector {
 	protected static final String PARSER_FILE = "./lib/englishPCFG.ser.gz";

@@ -3,6 +3,11 @@ package at.ac.tuwien.ir.preprocessing.impl;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Takes a file as input assuming that each sentence is in one line. 
+ * @author Andreas Bernauer
+ *
+ */
 public class PerLineSentenceProvider 
 extends FileSentenceProvider {
 	

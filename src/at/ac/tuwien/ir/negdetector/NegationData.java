@@ -7,6 +7,17 @@ import java.util.Map;
 
 import edu.stanford.nlp.trees.Tree;
 
+/**
+ * This class is the output of the NegationDetector. It holds the whole input sentence,
+ * all negation-signals found in the sentence and for every negation-signal:
+ * - one or more negation pattern
+ * - one or more negated pattern
+ * - error flags, that indicate that either a negation pattern and/or negated phrase
+ * was not found or that mor than one were found or that more than one regular expression 
+ * applied. 
+ * @author Andreas Bernauer
+ *
+ */
 public class NegationData {
 
 	private Tree root;
@@ -18,6 +29,10 @@ public class NegationData {
 	
 	private boolean locked = false;
 	
+	/**
+	 * Every NgationData must contain the sentence-root.
+	 * @param root the sentence root
+	 */
 	public NegationData(Tree root) {
 		setRoot(root);
 		setNegationSignals(new ArrayList<Tree>());
@@ -52,6 +67,12 @@ public class NegationData {
 		return true;
 	}
 	
+	/**
+	 * Adds a list of negation signals. The tree must be in the root tree.
+	 * @param negSignals List of negation signals
+	 * @return true if successfully added neation signals, false if there was 
+	 * an error or the lock-flag is set. 
+	 */
 	public boolean addNegationSignals(List<Tree> negSignals) {
 		if (isLocked()) {
 			System.err.println("Locked.");
@@ -77,6 +98,14 @@ public class NegationData {
 		return true;
 	}
 	
+	/**
+	 * Adds a list of negation patterns for one specific negation Signal. The negation 
+	 * patterns must be in the root tree and the negation signal must be already added.
+	 * @param negationPatterns Negation patterns for the negation signal
+	 * @param negSignal Negation signal
+	 * @return true if successfully added the negation patterns, false if there was 
+	 * an error or the lock-flag is set. 
+	 */
 	public boolean addNegationPatterns(List<Tree> negationPatterns, Tree negSignal) {
 		if (isLocked()) {
 			System.err.println("Locked.");
@@ -97,6 +126,14 @@ public class NegationData {
 		return true;
 	}
 	
+	/**
+	 * Adds a list of negated phrases for one specific negation Signal. The negated 
+	 * phrases must be in the root tree and the negation signal must be already added.
+	 * @param negatedPhrases Negated phrases for the negation signal
+	 * @param negSignal Negation signal
+	 * @return true if successfully added the negated phrases, false if there was 
+	 * an error or the lock-flag is set. 
+	 */
 	public boolean addNegatedPhrases(List<Tree> negatedPhrases, Tree negSignal) {
 		if (isLocked()) {
 			System.err.println("Locked.");
@@ -116,7 +153,13 @@ public class NegationData {
 		getNegatedPhrases().put(negSignal.nodeNumber(root), negatedPhrases);
 		return true;
 	}
-
+	
+	/**
+	 * Locks the object, the obejct is ro. 
+	 */
+	public void lock() {
+		setLocked(true);
+	}
 	public Tree getRoot() {
 		return root;
 	}
@@ -231,9 +274,6 @@ public class NegationData {
 	}
 	private void setLocked(boolean locked) {
 		this.locked = locked;
-	}
-	public void lock() {
-		setLocked(true);
 	}
 	private Map<Integer, NegationDataErrors> getErrorFlags() {
 		return errorFlags;

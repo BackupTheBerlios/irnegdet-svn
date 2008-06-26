@@ -6,6 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Takes a file as input.
+ * @author Andreas Bernauer
+ *
+ */
 public abstract class FileSentenceProvider 
 extends BaseSentenceProvider {
 	

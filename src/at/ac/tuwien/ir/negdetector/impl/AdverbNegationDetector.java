@@ -12,6 +12,12 @@ import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
 import edu.stanford.nlp.trees.tregex.tsurgeon.TsurgeonPattern;
 import edu.stanford.nlp.util.Pair;
 
+/**
+ * Detects negations in sentences, by using a pos-tagger and applying regular-expressions 
+ * to the tree that the pos-tagger returns.
+ * @author Andreas Bernuaer
+ *
+ */
 public class AdverbNegationDetector 
 extends BaseNegationDetector {
 	protected static final String NEG_SIG_TREGEX =
