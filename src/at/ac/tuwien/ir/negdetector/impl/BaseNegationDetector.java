@@ -19,9 +19,10 @@ implements NegationDetector {
 		"-outputFormat", "penn"
 	};
 	private LexicalizedParser parser;
+	private NegationData negData;
 	
 	public abstract NegationData detectNegation(Tree root);
-	protected abstract List<Tree> findNegationSignal(Tree root);
+	protected abstract List<Tree> findNegationSignals(Tree root);
 	protected abstract List<Tree> findNegationPatterns(Tree negSignal, Tree root);
 	protected abstract List<Tree> findNegatedPhrase(Tree negSignal, Tree root);
 	
@@ -66,5 +67,11 @@ implements NegationDetector {
 
 	protected void setParser(LexicalizedParser parser) {
 		this.parser = parser;
+	}
+	protected NegationData getNegData() {
+		return negData;
+	}
+	protected void setNegData(NegationData negData) {
+		this.negData = negData;
 	}
 }

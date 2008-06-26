@@ -82,8 +82,9 @@ extends BaseNegationDetector {
 	protected static final String NEG_PATTERN_SURGOP =
 		"delete cuthere";
 	
-	protected List<Tree> findNegationSignal(Tree root) {
+	protected List<Tree> findNegationSignals(Tree root) {
 		List<Tree> negSignals = getMatches(root, NEG_SIG_TREGEX);
+		getNegData().addNegationSignals(negSignals);
 		return negSignals;
 	}
 	
@@ -121,7 +122,7 @@ extends BaseNegationDetector {
 	}
 	
 	private List<Pair<TregexPattern, TsurgeonPattern>> fillCutPatterns(
-				List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns, Tree root, 
+				List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns, Tree root, Tree negSignal,
 				final String tregexPattern, final String[] tregexCutPattern, final String surgopPattern) 
 	throws ParseException {
 		if (hasMatches(root, tregexPattern)) {
@@ -135,15 +136,17 @@ extends BaseNegationDetector {
 					}
 				}
 			} else {
-				System.err.println("Warning: More than one pattern for the negation pattern applied.");
+				getNegData().setAppliedMoreThanOneTregexNegPattern(true, negSignal);
+System.err.println("Warning: More than one pattern for the negation pattern applied.");
 			}
 		}
 		return cutPatterns;
 	}
-	private List<Tree> fillNegationsPatterns(List<Tree> negPatterns, Tree root, final String tregex) {
+	private List<Tree> fillNegationsPatterns(List<Tree> negPatterns, Tree root, Tree negSignal, final String tregex) {
 		if (hasMatches(root, tregex)) {
 			if (negPatterns.size() > 0) {
-				System.err.println("Warning: More than one pattern for the negation pattern applied.");
+				getNegData().setMoreThanOneFoundNegPattern(true, negSignal);
+System.err.println("Warning: More than one pattern for the negation pattern found.");
 			}
 			negPatterns.addAll(getMatches(root, tregex));
 		}
@@ -162,15 +165,15 @@ extends BaseNegationDetector {
 		}
 		vpRoot = vpRoot.deepCopy();
 		try {
-			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
+			cutPatterns = fillCutPatterns(cutPatterns, vpRoot, negSignal,
 					NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE,
 					NEG_PATTERN_TREGEX_CUT_BE_VERB_PAST_PARTICIPLE,
 					NEG_PATTERN_SURGOP);
-			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
+			cutPatterns = fillCutPatterns(cutPatterns, vpRoot, negSignal,
 					NEG_PATTERN_TREGEX_BE_ADJECTIVE,
 					NEG_PATTERN_TREGEX_CUT_BE_ADJECTIVE,
 					NEG_PATTERN_SURGOP);
-			cutPatterns = fillCutPatterns(cutPatterns, vpRoot,
+			cutPatterns = fillCutPatterns(cutPatterns, vpRoot, negSignal,
 					NEG_PATTERN_TREGEX_DO,
 					NEG_PATTERN_TREGEX_CUT_DO,
 					NEG_PATTERN_SURGOP);
@@ -181,15 +184,18 @@ extends BaseNegationDetector {
 		if (cutPatterns.size() > 0) {
 			negPatterns.add(Tsurgeon.processPatternsOnTree(cutPatterns, vpRoot));
 		} else {
-			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE);
-			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, NEG_PATTERN_TREGEX_BE_ADJECTIVE);
-			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, NEG_PATTERN_TREGEX_DO);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, negSignal, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, negSignal, NEG_PATTERN_TREGEX_BE_ADJECTIVE);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, negSignal, NEG_PATTERN_TREGEX_DO);
 			if (negPatterns.size() < 1) {
-				System.err.println("Warning: No negation pattern found.");
+				getNegData().setNotFoundNegPattern(true, negSignal);
+System.err.println("Warning: No negation pattern found.");
 			}
 		}
-if (negPatterns.size() > 0)
-negPatterns.get(0).pennPrint();
+		getNegData().addNegationPatterns(negPatterns, negSignal);
+if (negPatterns.size() > 0) {
+	negPatterns.get(0).pennPrint();
+}
 		return negPatterns;
 	}	
 	
@@ -206,27 +212,29 @@ negPatterns.get(0).pennPrint();
 		sRoot = sRoot.deepCopy();
 		negPhrases = getMatches(sRoot, NEG_PHRASE_TREGEX);
 		if (negPhrases.size() > 1) {
-			System.err.println("Warning: More than one negated phrase was found.");
+			getNegData().setMoreThanOneFoundNegPhrase(true, negSignal);
+System.err.println("Warning: More than one negated phrase was found.");
 		} else if (negPhrases.size() < 1) {
-			System.err.println("Warning: No negation phrase found.");
+			getNegData().setNotFoundNegPhrase(true, negSignal);
+System.err.println("Warning: No negation phrase found.");
 		}
-if (negPhrases.size() > 0)
-negPhrases.get(0).pennPrint();
+		getNegData().addNegatedPhrases(negPhrases, negSignal);
+if (negPhrases.size() > 0) {
+	negPhrases.get(0).pennPrint();
+}
 		return negPhrases;
 	}
 	
 	public NegationData detectNegation(Tree root) {
-		List<Tree> negPatterns;
-		List<Tree> negPhrases;
-		NegationData negData = new NegationData(root);
+		setNegData(new NegationData(root));
 		
-		List<Tree> negSignals = findNegationSignal(root);
+		List<Tree> negSignals = findNegationSignals(root);
 		
 		for (Tree negSignal: negSignals) {
-			negPatterns = findNegationPatterns(negSignal, root);
-			negPhrases = findNegatedPhrase(negSignal, root);
-			negData.addNegationSignal(negSignal, negPatterns, negPhrases);
+			findNegationPatterns(negSignal, root);
+			findNegatedPhrase(negSignal, root);
 		}
-		return negData;
+		getNegData().lock();
+		return getNegData();
 	}
 }
