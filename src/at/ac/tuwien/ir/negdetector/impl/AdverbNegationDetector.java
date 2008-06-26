@@ -15,7 +15,7 @@ import edu.stanford.nlp.util.Pair;
 public class AdverbNegationDetector 
 extends BaseNegationDetector {
 	protected static final String NEG_SIG_TREGEX =
-		"RB >> S !$++ NP < not | < n't | < never";
+		"RB >> S !$++ NP > VP [< not | < n't | < never]";
 	
 	protected static final String[] NEG_PATTERN_TREGEX_CUT_BE_VERB_PAST_PARTICIPLE = {
 		"(VP !> __) < (/VBP|VBZ|VBD|MD/ [" +

@@ -22,7 +22,7 @@ public class InformalNegationDetectionTest {
 		NegationData negData;
 		NegationDetector detector = new AdverbNegationDetector();
 		detector.init();
-		PerLineSentenceProvider provider = new PerLineSentenceProvider(new File("./brown_neg.txt"));
+		PerLineSentenceProvider provider = new PerLineSentenceProvider(new File("./sentences.txt"));
 		provider.init();
 		outputter = new CLIOutputter();
 		while(provider.hasNextSentence()) {

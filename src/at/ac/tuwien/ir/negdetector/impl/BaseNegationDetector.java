@@ -14,7 +14,7 @@ public abstract class BaseNegationDetector
 implements NegationDetector {
 	protected static final String PARSER_FILE = "./lib/englishPCFG.ser.gz";
 	protected static final String[] PARSER_FLAGS = {
-		"-maxlength", "50",
+		"-maxlength", "75",
 		"-retainTmpSubcategories",
 		"-outputFormat", "penn"
 	};

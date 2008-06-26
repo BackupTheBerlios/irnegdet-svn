@@ -26,6 +26,10 @@ extends BaseSentenceProvider {
 			System.err.println("Cannot open file: " + file.getAbsolutePath());
 			System.exit(1);
 		}
+		if (isInit()) {
+			System.err.println("Already init.");
+			return;
+		}
 		try {
 			setIn(new BufferedReader(new FileReader(getFile())));
 		} catch (FileNotFoundException e) {
