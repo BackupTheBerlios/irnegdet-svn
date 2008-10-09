@@ -167,10 +167,10 @@ public class NegationData {
 		return negationSignals;
 	}
 	public List<Tree> getNegationPatterns(Tree negationSignal) {
-		return getNegationPatterns().get(negationSignal);
+		return getNegationPatterns().get(negationSignal.nodeNumber(root));
 	}
 	public List<Tree> getNegatedPhrases(Tree negationSignal) {
-		return getNegatedPhrases().get(negationSignal);
+		return getNegatedPhrases().get(negationSignal.nodeNumber(root));
 	}
 	protected void setRoot(Tree root) {
 		this.root = root;
