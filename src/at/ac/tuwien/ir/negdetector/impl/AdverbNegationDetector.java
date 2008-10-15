@@ -1,9 +1,11 @@
 package at.ac.tuwien.ir.negdetector.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import at.ac.tuwien.ir.negdetector.NegationData;
+import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.ParseException;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
@@ -127,6 +129,49 @@ extends BaseNegationDetector {
 		return negSignals;
 	}
 	
+	private List<Tree> matchNodeNumbers(Tree negPhratternTree, Tree originalRoot) {
+		List<Tree> matchedLeaves = new ArrayList<Tree>();
+		Iterator<Tree> rootIterator = originalRoot.iterator();
+		while (rootIterator.hasNext()) {
+			Tree currentRootNode = rootIterator.next();
+			if (currentRootNode.label().equals(negPhratternTree.getNodeNumber(1).label())) {
+				if (matchChildren(currentRootNode, negPhratternTree.getNodeNumber(1), matchedLeaves)) {
+					return matchedLeaves;
+				} else {
+					matchedLeaves.clear();
+				}
+			}
+		}
+		return null;
+	}
+	
+	private boolean matchChildren(Tree currentRootNode, Tree currentNegPhratternNode, List<Tree> matchedLeaves) {
+		if (currentRootNode.numChildren() < currentNegPhratternNode.numChildren()) {
+			return false;
+		}
+		if (currentRootNode.isLeaf() && currentNegPhratternNode.isLeaf()) {
+			matchedLeaves.add(currentRootNode);
+			return true;
+		}
+		List<Tree> rootChildren = currentRootNode.getChildrenAsList();
+		List<Tree> phratternChildren = currentNegPhratternNode.getChildrenAsList();
+		boolean foundMatch;
+		for (Tree phratternChild: phratternChildren) {
+			foundMatch = false;
+			for (Tree rootChild: rootChildren) {
+				if (rootChild.label().equals(phratternChild.label())) {
+					if (matchChildren(rootChild, phratternChild, matchedLeaves)) {
+						foundMatch = true;
+					}
+				}
+			}
+			if (!foundMatch) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private List<Pair<TregexPattern, TsurgeonPattern>> fillCutPatterns(
 				List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns, Tree root, Tree negSignal,
 				final String tregexPattern, final String[] tregexCutPattern, final String surgopPattern) 
@@ -148,18 +193,20 @@ System.err.println("Warning: More than one pattern for the negation pattern appl
 		}
 		return cutPatterns;
 	}
-	private List<Tree> fillNegationsPatterns(List<Tree> negPatterns, Tree root, Tree negSignal, final String tregex) {
+	private List<List<Tree>> fillNegationsPatterns(List<List<Tree>> negPatterns, Tree root, Tree originalRoot, Tree negSignal, final String tregex) {
 		if (hasMatches(root, tregex)) {
 			if (negPatterns.size() > 0) {
 				getNegData().setMoreThanOneFoundNegPattern(true, negSignal);
 System.err.println("Warning: More than one pattern for the negation pattern found.");
 			}
-			negPatterns.addAll(getMatches(root, tregex));
+			for (Tree match: getMatches(root, tregex)) {
+				negPatterns.add(matchNodeNumbers(match, originalRoot));
+			}
 		}
 		return negPatterns;
 	}
-	protected List<Tree> findNegationPatterns(Tree negSignal, Tree root) {
-		List<Tree> negPatterns = new ArrayList<Tree>();
+	protected List<List<Tree>> findNegationPatterns(Tree negSignal, Tree root) {
+		List<List<Tree>> negPatterns = new ArrayList<List<Tree>>();
 		List<Pair<TregexPattern, TsurgeonPattern>> cutPatterns = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>();
 		Tree vpRoot = negSignal;
 		while (!vpRoot.label().value().equals("VP")) {
@@ -169,6 +216,7 @@ System.err.println("Warning: More than one pattern for the negation pattern foun
 				break;
 			}
 		}
+		Tree originalRoot = vpRoot;
 		vpRoot = vpRoot.deepCopy();
 		try {
 			cutPatterns = fillCutPatterns(cutPatterns, vpRoot, negSignal,
@@ -188,25 +236,23 @@ System.err.println("Warning: More than one pattern for the negation pattern foun
 		}
 
 		if (cutPatterns.size() > 0) {
-			negPatterns.add(Tsurgeon.processPatternsOnTree(cutPatterns, vpRoot));
+			Tree negPatternTree = Tsurgeon.processPatternsOnTree(cutPatterns, vpRoot);
+			negPatterns.add(matchNodeNumbers(negPatternTree, originalRoot));
 		} else {
-			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, negSignal, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE);
-			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, negSignal, NEG_PATTERN_TREGEX_BE_ADJECTIVE);
-			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, negSignal, NEG_PATTERN_TREGEX_DO);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, originalRoot, negSignal, NEG_PATTERN_TREGEX_BE_VERB_PAST_PARTICIPLE);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, originalRoot, negSignal, NEG_PATTERN_TREGEX_BE_ADJECTIVE);
+			negPatterns = fillNegationsPatterns(negPatterns, vpRoot, originalRoot, negSignal, NEG_PATTERN_TREGEX_DO);
 			if (negPatterns.size() < 1) {
 				getNegData().setNotFoundNegPattern(true, negSignal);
 System.err.println("Warning: No negation pattern found.");
 			}
 		}
 		getNegData().addNegationPatterns(negPatterns, negSignal);
-if (negPatterns.size() > 0) {
-	negPatterns.get(0).pennPrint();
-}
 		return negPatterns;
 	}	
 	
-	protected List<Tree> findNegatedPhrase(Tree negSignal, Tree root) {
-		List<Tree> negPhrases = new ArrayList<Tree>();
+	protected List<List<Tree>> findNegatedPhrase(Tree negSignal, Tree root) {
+		List<List<Tree>> negPhrases = new ArrayList<List<Tree>>();
 		Tree sRoot = negSignal;
 		while (!sRoot.label().value().equals("S")) {
 			sRoot = sRoot.parent(root);
@@ -215,8 +261,11 @@ if (negPatterns.size() > 0) {
 				break;
 			}
 		}
+		Tree originalRoot = sRoot;
 		sRoot = sRoot.deepCopy();
-		negPhrases = getMatches(sRoot, NEG_PHRASE_TREGEX);
+		for (Tree match: getMatches(sRoot, NEG_PHRASE_TREGEX)) {
+			negPhrases.add(matchNodeNumbers(match, originalRoot));
+		}
 		if (negPhrases.size() > 1) {
 			getNegData().setMoreThanOneFoundNegPhrase(true, negSignal);
 System.err.println("Warning: More than one negated phrase was found.");
@@ -225,9 +274,6 @@ System.err.println("Warning: More than one negated phrase was found.");
 System.err.println("Warning: No negation phrase found.");
 		}
 		getNegData().addNegatedPhrases(negPhrases, negSignal);
-if (negPhrases.size() > 0) {
-	negPhrases.get(0).pennPrint();
-}
 		return negPhrases;
 	}
 	

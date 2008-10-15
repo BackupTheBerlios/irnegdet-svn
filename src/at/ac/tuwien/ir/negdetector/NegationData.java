@@ -22,8 +22,8 @@ public class NegationData {
 
 	private Tree root;
 	private List<Tree> negationSignals;
-	private Map<Integer, List<Tree>> negationPatterns;
-	private Map<Integer, List<Tree>> negatedPhrases;
+	private Map<Integer, List<List<Tree>>> negationPatterns;
+	private Map<Integer, List<List<Tree>>> negatedPhrases;
 	private Map<Integer, NegationDataErrors> errorFlags;
 	
 	
@@ -36,14 +36,14 @@ public class NegationData {
 	public NegationData(Tree root) {
 		setRoot(root);
 		setNegationSignals(new ArrayList<Tree>());
-		setNegationPatterns(new HashMap<Integer, List<Tree>>());
-		setNegatedPhrases(new HashMap<Integer, List<Tree>>());
+		setNegationPatterns(new HashMap<Integer, List<List<Tree>>>());
+		setNegatedPhrases(new HashMap<Integer, List<List<Tree>>>());
 		setErrorFlags(new HashMap<Integer, NegationDataErrors>());
 	}
 	private boolean isLeafInRoot(Tree leaf) {
 		List<Tree> rootLeaves = root.getLeaves();
 		for (Tree rootLeaf: rootLeaves) {
-			if (rootLeaf.label().equals(leaf.label())) {
+			if (rootLeaf.nodeNumber(root) == leaf.nodeNumber(root)) {
 				return true;
 			}
 		}
@@ -58,13 +58,27 @@ public class NegationData {
 		}
 		return true;
 	}
-	private boolean areAllLeavesInRoot(List<Tree> tList) {
-		for (Tree tree: tList) {
-			if (!areAllLeavesInRoot(tree)) {
-				return false;
+	private boolean areAllLeavesInRoot(List tList) {
+		if (tList.size() > 0) {
+			if (tList.get(0) instanceof List) {
+				for (List<Tree> treeLeaves: (List<List<Tree>>)tList) {
+					for(Tree treeLeaf: treeLeaves){
+						if (!isLeafInRoot(treeLeaf)) {
+							return false;
+						}
+					}
+				}
+				return true;
+			} else if (tList.get(0) instanceof Tree) {
+				for (Tree tree: (List<Tree>)tList) {
+					if (!areAllLeavesInRoot(tree)) {
+						return false;
+					}
+				}
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	/**
@@ -101,12 +115,12 @@ public class NegationData {
 	/**
 	 * Adds a list of negation patterns for one specific negation Signal. The negation 
 	 * patterns must be in the root tree and the negation signal must be already added.
-	 * @param negationPatterns Negation patterns for the negation signal
+	 * @param negPatterns Negation patterns for the negation signal
 	 * @param negSignal Negation signal
 	 * @return true if successfully added the negation patterns, false if there was 
 	 * an error or the lock-flag is set. 
 	 */
-	public boolean addNegationPatterns(List<Tree> negationPatterns, Tree negSignal) {
+	public boolean addNegationPatterns(List<List<Tree>> negPatterns, Tree negSignal) {
 		if (isLocked()) {
 			System.err.println("Locked.");
 			return false;
@@ -118,23 +132,23 @@ public class NegationData {
 		if (! negationSignals.contains(negSignal)) {
 			System.err.println("Appropriate Negation Signal must be added.");
 		}
-		if (!areAllLeavesInRoot(negationPatterns)) {
+		if (!areAllLeavesInRoot(negPatterns)) {
 			System.err.println("Negation Pattern not in root tree.");
 			return false;
 		}
-		getNegationPatterns().put(negSignal.nodeNumber(root), negationPatterns);
+		getNegationPatterns().put(negSignal.nodeNumber(root), negPatterns);
 		return true;
 	}
 	
 	/**
 	 * Adds a list of negated phrases for one specific negation Signal. The negated 
 	 * phrases must be in the root tree and the negation signal must be already added.
-	 * @param negatedPhrases Negated phrases for the negation signal
+	 * @param negPhrases Negated phrases for the negation signal
 	 * @param negSignal Negation signal
 	 * @return true if successfully added the negated phrases, false if there was 
 	 * an error or the lock-flag is set. 
 	 */
-	public boolean addNegatedPhrases(List<Tree> negatedPhrases, Tree negSignal) {
+	public boolean addNegatedPhrases(List<List<Tree>> negPhrases, Tree negSignal) {
 		if (isLocked()) {
 			System.err.println("Locked.");
 			return false;
@@ -146,11 +160,11 @@ public class NegationData {
 		if (! negationSignals.contains(negSignal)) {
 			System.err.println("Appropriate Negation Signal must be added.");
 		}
-		if (!areAllLeavesInRoot(negatedPhrases)) {
+		if (!areAllLeavesInRoot(negPhrases)) {
 			System.err.println("Negated Phrase not in root tree.");
 			return false;
 		}
-		getNegatedPhrases().put(negSignal.nodeNumber(root), negatedPhrases);
+		getNegatedPhrases().put(negSignal.nodeNumber(root), negPhrases);
 		return true;
 	}
 	
@@ -166,10 +180,10 @@ public class NegationData {
 	public List<Tree> getNegationSignals() {
 		return negationSignals;
 	}
-	public List<Tree> getNegationPatterns(Tree negationSignal) {
+	public List<List<Tree>> getNegationPatterns(Tree negationSignal) {
 		return getNegationPatterns().get(negationSignal.nodeNumber(root));
 	}
-	public List<Tree> getNegatedPhrases(Tree negationSignal) {
+	public List<List<Tree>> getNegatedPhrases(Tree negationSignal) {
 		return getNegatedPhrases().get(negationSignal.nodeNumber(root));
 	}
 	protected void setRoot(Tree root) {
@@ -178,16 +192,16 @@ public class NegationData {
 	protected void setNegationSignals(List<Tree> negationSignals) {
 		this.negationSignals = negationSignals;
 	}
-	protected void setNegationPatterns(Map<Integer, List<Tree>> negationPatterns) {
+	protected void setNegationPatterns(Map<Integer, List<List<Tree>>> negationPatterns) {
 		this.negationPatterns = negationPatterns;
 	}
-	protected void setNegatedPhrases(Map<Integer, List<Tree>> negPhrases) {
+	protected void setNegatedPhrases(Map<Integer, List<List<Tree>>> negPhrases) {
 		this.negatedPhrases = negPhrases;
 	}
-	protected Map<Integer, List<Tree>> getNegationPatterns() {
+	protected Map<Integer, List<List<Tree>>>getNegationPatterns() {
 		return negationPatterns;
 	}
-	protected Map<Integer, List<Tree>> getNegatedPhrases() {
+	protected Map<Integer, List<List<Tree>>> getNegatedPhrases() {
 		return negatedPhrases;
 	}
 	public boolean isNotFoundNegPattern(Tree negSignal) {
