@@ -84,15 +84,17 @@ public class HTMLOutputter
         negationSignals = getNegData().getNegationSignals();
         for (Tree negationSignal : negationSignals) {
             negationPatterns = getNegData().getNegationPatterns(negationSignal);
-            for (List<Tree> listNegationPatterns : negationPatterns) {
-                for (Tree negationPattern : listNegationPatterns) {
-                    negationPatternLeaves = negationPattern.getLeaves();
-                    for (Tree negationPatternLeaf : negationPatternLeaves) {
-                        if (negationPatternLeaf.nodeNumber(getNegData().getRoot()) == nodeNumber) {
-                            return true;
-                        }
-                    }
-                }
+            if (negationPatterns != null) {
+	            for (List<Tree> listNegationPatterns : negationPatterns) {
+	                for (Tree negationPattern : listNegationPatterns) {
+	                    negationPatternLeaves = negationPattern.getLeaves();
+	                    for (Tree negationPatternLeaf : negationPatternLeaves) {
+	                        if (negationPatternLeaf.nodeNumber(getNegData().getRoot()) == nodeNumber) {
+	                            return true;
+	                        }
+	                    }
+	                }
+	            }
             }
         }
 
@@ -103,15 +105,17 @@ public class HTMLOutputter
         negationSignals = getNegData().getNegationSignals();
         for (Tree negationSignal : negationSignals) {
             negatedPhrases = getNegData().getNegatedPhrases(negationSignal);
-            for (List<Tree> listNegatedPhrase : negatedPhrases) {
-                for (Tree negatedPhrase : listNegatedPhrase) {
-                    negatedPhraseLeaves = negatedPhrase.getLeaves();
-                    for (Tree negatedPhraseLeaf : negatedPhraseLeaves) {
-                        if (negatedPhraseLeaf.nodeNumber(getNegData().getRoot()) == nodeNumber) {
-                            return true;
-                        }
-                    }
-                }
+            if (negatedPhrases != null) {
+	            for (List<Tree> listNegatedPhrase : negatedPhrases) {
+	                for (Tree negatedPhrase : listNegatedPhrase) {
+	                    negatedPhraseLeaves = negatedPhrase.getLeaves();
+	                    for (Tree negatedPhraseLeaf : negatedPhraseLeaves) {
+	                        if (negatedPhraseLeaf.nodeNumber(getNegData().getRoot()) == nodeNumber) {
+	                            return true;
+	                        }
+	                    }
+	                }
+	            }
             }
         }
 
@@ -177,30 +181,40 @@ public class HTMLOutputter
                 }
                 writeItem("<br/>", null);
                 negationPatterns = getNegData().getNegationPatterns(negationSignal);
-                writeItem("\n<b>Negation Pattern:</b> ", null);
+                
+                if ((negationPatterns != null) && (negationPatterns.size() > 0)) {
+                	writeItem("\n<b>Negation Pattern:</b> ", null);
 
-                for (List<Tree> listNegationPatterns : negationPatterns) {
-                    for (Tree negationPattern : listNegationPatterns) {
-                        negationPatternLeaves = negationPattern.getLeaves();
-                        for (Tree negationPatternLeaf : negationPatternLeaves) {
-                            writeItem(negationPatternLeaf.value(), NEGATION_PATTERN_COLOR);
-                        }
-                    }
+	                for (List<Tree> listNegationPatterns : negationPatterns) {
+	                    for (Tree negationPattern : listNegationPatterns) {
+	                        negationPatternLeaves = negationPattern.getLeaves();
+	                        for (Tree negationPatternLeaf : negationPatternLeaves) {
+	                            writeItem(negationPatternLeaf.value(), NEGATION_PATTERN_COLOR);
+	                        }
+	                    }
+	                }
+	                writeItem("<br/>", null);
+                } else {
+                	writeItem("No negation Patterns found in sentence.<br/>", null);
                 }
-                writeItem("<br/>", null);
 
                 negatedPhrases = getNegData().getNegatedPhrases(negationSignal);
-                writeItem("\n<b>Negated Phrase:</b> ", null);
+                
+                if ((negatedPhrases != null) && (negatedPhrases.size() > 0)) {
+    	            writeItem("\n<b>Negated Phrase:</b> ", null);
 
-                for (List<Tree> listNegatedPhrase : negatedPhrases) {
-                    for (Tree negatedPhrase : listNegatedPhrase) {
-                        negatedPhraseLeaves = negatedPhrase.getLeaves();
-                        for (Tree negatedPhraseLeaf : negatedPhraseLeaves) {
-                            writeItem(negatedPhraseLeaf.value(), NEGATED_PHRASE_COLOR);
-                        }
-                    }
+                    for (List<Tree> listNegatedPhrase : negatedPhrases) {
+	                    for (Tree negatedPhrase : listNegatedPhrase) {
+	                        negatedPhraseLeaves = negatedPhrase.getLeaves();
+	                        for (Tree negatedPhraseLeaf : negatedPhraseLeaves) {
+	                            writeItem(negatedPhraseLeaf.value(), NEGATED_PHRASE_COLOR);
+	                        }
+	                    }
+	                }
+	                writeItem("<br/>", null);
+                } else {
+                	writeItem("No negated Phrases found in sentence.<br/>", null);
                 }
-                writeItem("<br/>", null);
             }
             writeItem("<hr/>", null);
         }
