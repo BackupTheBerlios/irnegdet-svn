@@ -28,11 +28,12 @@ public class InformalNegationDetectionTest {
 		while(provider.hasNextSentence()) {
 			sentence = provider.getNextSentence();
 			tree = detector.parseSentence(sentence);
-			tree.pennPrint();
+			//tree.pennPrint();
 			negData = detector.detectNegation(tree);
-			//outputter.init(negData);
-			//outputter.write();
-			//outputter.shutdown();
+			outputter.init();
+                        outputter.setNegData(negData);
+			outputter.write();
+			outputter.shutdown();
 		}
 		
 		provider.shutdown();
