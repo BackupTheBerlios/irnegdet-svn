@@ -20,7 +20,16 @@
 .twoColFixLtHdr #mainContent { zoom: 1; }
 /* the above proprietary zoom property gives IE the hasLayout it needs to avoid several bugs */
 </style>
-<![endif]--></head>
+<![endif]-->
+<style type="text/css">
+<!--
+.style1 {
+	color: #999900;
+	font-style: italic;
+}
+-->
+</style>
+</head>
 
 <body class="twoColFixLtHdr">
 
@@ -36,14 +45,24 @@
     <p><a href="./referenzen.htm">Referenzen</a></p>
   <!-- end #sidebar1 --></div>
   <div id="mainContent">
-    <p align="justify">Im Zuge der LVA &quot;Information Retrieval (188.412)&quot; hatten wir die Aufgabe, einen Algorithmus, der Adverb-Negationen in englisch-sprachigen Texten identifizieren kann, zu implementieren. Die Negationen werden durch Adverben wie zB. &quot;not&quot; getriggert und treten in Kombination mit einem Verb auf. Das negierte Konzept hängt von der Zeitform (Aktiv/Passiv).</p>
-    <p align="justify">&quot;Teachers do not support cheating.&quot; (Aktiv)</p>
-    <p align="justify">&quot;Cheating is not recommended.&quot; (Passiv)</p>
-    <p align="justify">Weiters ist es bei der Negation schwierig festzustellen, welche Substantiv-Phrasen von dieser betroffen sind. Huang und Lowe haben einen Algorithmus entwickelt [1], der Sätze parsen kann und negierte Konzepte identifizieren kann. Diesen Algorithmus haben wir unter Verwendungen des Stanford Parsers [2], der das Parsen der Sätze übernimmt, implementiert.<br />
-      <br />
-    </p>
-    <p align="left">[1] <a href="http://www.jamia.org/cgi/content/abstract/14/3/304" target="_blank">http://www.jamia.org/cgi/content/abstract/14/3/304</a> <br />
-    [2] <a href="http://nlp.stanford.edu/software/index.shtml" target="_blank">http://nlp.stanford.edu/software/index.shtml</a></p>
+    <h2 align="justify">Implementierung</h2>
+    <p align="justify">Das Herausfiltern von Adverbnegationen geschieht in mehreren Schritten.</p>
+    <p align="justify">Zuerst muss der Satzbau analysiert, die Wortart jedes einzelnen Wort bestimmt und anschließend in Zusammenhang gebracht werden. Diese nicht-triviale Aufgabe übernimmt in unserer Implementierung der Stanford-Parser <a href="./referenzen.htm">[2]</a>. Diesem wird ein Satz übergeben, welcher verarbeitet und in einen Baum umgewandelt wird. Dieser Baum beinhaltet die Informationen über den Inhalt des Satzes, die Wortarten und deren Zusammenhang. Beispielsweise kann sich ein Satz in eine <em>Noun-Phrase</em> und in eine <em>Verb-Phrase</em> gliedern, deren Kinder entweder in ein Terminal, also in ein Wort, oder in ein Non-terminal münden können, beispielsweise in eine weitere <em>Noun-Phrase</em> oder in eine <em>Adjective-Phrase</em>.</p>
+    <p align="justify">Die Information über das Vorhandensein einer Adverbnegation lässt sich anhand der Struktur um ein Negationswort gewinnen. In unserem Fall sind berücksichtigte Negationswörter <em>not</em> und <em>n't</em>. Mit Hilfe so genannter <em>Tregex</em>, in Anlehnung an die bei Perl bekannten Regular Expressions, können Regeln in Bezug auf das Verhältnis bestimmter Knoten im Baum zueinander ausformuliert werden. Dabei stehen einem Regeln wie 'A ist ein direkter Unterknoten von B', 'A ist ein Nachbarknoten von B' oder 'A ist ein Überknoten von B und ist mittels einer ununterbrochenen Kette mit Knoten C verbunden' zur Verfügung. Details können in der Dokumentation des Stanford-Parsers <a href="./referenzen.htm">[2]</a> nachgelesen werden. Eine Adverbnegation lässt sich in</p>
+    <ul>
+      <li>das Negationswort</li>
+      <li>ein Negationsmuster, und</li>
+      <li>eine Negationsphrase</li>
+    </ul>
+    <p align="justify">      unterteilen. Bei einem Satz, wie zum Beispiel</p>
+    <p align="center"><span class="style1">The right moment hasn't been awaited.</span> </p>
+    <p align="justify">ist das Negationswort <span class="style1">n't</span>, das Negationsmuster <span class="style1">hasn't been awaited</span> und die Negationsphrase <span class="style1">The right moment</span>. Der Algorithmus zum Herausfiltern dieser Teile wird im nächsten Absatz beschrieben.</p>
+    <p align="justify">Zuerst wird der Satz nach einem Negationswort durchsucht. Dies geschieht mittels einer relativ einfachen Tregex, wobei versucht wird False Positives auszuschließen. Da die Negationsschlüsselwörter nur in wenigen Fälle für Muster vorkommen, die keine Adverbnegationen darstellen, ist das Herausfiltern nicht so schwierig. Wurde ein Negationswort gefunden, wird versucht, das entsprechende Muster ausgehend von diesem Wort herauszulösen. Auf dieselbe Weise geschieht das Herausfinden des Patterns. Ein Negationsmuster lässt sich grob in drei Arten unterteilen. Für jede Art gibt es zwei Tregex:</p>
+    <ul>
+      <li>eine spezielle, die das Muster sucht und jene Kinder des relevanten Baums, die nicht zum Muster gehören, wegschneidet</li>
+      <li>eine allgemeinere, die auch auf Bäume reagiert, die keine Kinder zuviel haben</li>
+    </ul>
+    <p align="justify">Zuerst wird versucht die speziellere Tregex anzuwenden, anschließend die allgemeinere. Dabei werden Fehler, wie zum Beispiel, dass sich keine Tregex anwenden lassen, obwohl ein Negationswort gefunden wurde, oder dass sich mehr als nur ein Tregex anwenden lässt mit geloggt. Wurden alle Negationswörter eines Satzes verarbeitet, wird ein NegationData Objekt zur Weiterverarbeitung zurückgegeben, das alle relevanten Informationen enthält.</p>
   </div>
 	<!-- This clearing element should immediately follow the #mainContent div in order to force the #container div to contain all child floats --><br class="clearfloat" />
   <div id="footer">
