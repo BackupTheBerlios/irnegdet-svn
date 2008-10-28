@@ -1,0 +1,23 @@
+Einleitung
+Implementierung
+Auswertung
+Referenzen
+
+
+
+Das Herausfiltern von Adverbnegationen geschieht in mehreren Schritten:
+
+Zuerst muss der Satzbau analysiert, die Wortart jedes einzelnen Wort bestimmt und anschließend in Zusammenhang gebracht werden. Diese nicht-triviale Aufgabe übernimmt in unserer Implementierung der Stanford-Parser. Diesem wird ein Satz übergeben, welcher verarbeitet und in einen Baum umgewandelt wird. Dieser Baum beinhaltet die Informationen über den Inhalt des Satzes, die Wortarten und deren Zusammenhang. Beispielsweise kann sich ein Satz in eine "Noun-Phrase" und in eine "Verb-Phrase" gliedern, deren Kinder entweder in ein Termnal, also in ein Wort, oder in ein Non-terminal münden können, beispielsweise in eine weitere Noun-Phrase oder in eine Adjective-Phrase.
+
+Die Information über das Vorhandensein einer Adverbnegation lässt sich anhand der Struktur um ein Negationswort gewinnen. In unserem Fall sind berücksichtigte Negationswörter "not" und "n't". Mit Hilfe so genannter "Tregex", in Anlehnung an die bei Perl bekannten "Regular Expressions", können Regeln in Bezug auf das Verhältnis bestimmter Knoten im Baum zueinander ausformuliert werden. Dabei stehen einem Regeln wie "A ist ein direkter Unterknoten von B", "A ist ein Nachbarknoten von B" oder "A ist ein Überknoten von B und ist mittels einer ununterbrochenen Kette mit Knoten C verbunden" zur Verfügung. Details können in der Dokumentation des Stanfordparsers nachgelesen werden. Eine Adverbnegation lässt sich in
+*das Negationswort
+*ein Negationsmuster, und
+*eine Negationsphrase
+unterteilen. Bei einem Satz, wie "The right moment hasn't been awaited." ist das Negationswort "n't", das Negationsmuster "hasn't been awaited" und die Negationsphrase "The right moment". Der Algorithmus zum Herausfiltern dieser Teile sieht folgendermaßen aus:
+
+Zuerst wird der Satz nach einem Negationswort durchsucht; dies geschieht mittels einer relativ einfachen Tregex, wobei versucht wird False Positives auszuschließen. Da die Negationsschlüsselwörter nur in wenigen Fälle für Muster vorkommen, die keine Adverbnegationen darstellen, ist das Herausfiltern nicht so schwierig. Wurde ein Negationswort gefunden, wird versucht, das entsprechende Muster ausgehend von diesem Wort herauszulösen. Auf dieselbe Weise geschieht das Herausfinden des Patterns. Ein Negationsmuster lässt sich grob in drei Arten unterteilen. Für jede Art gibt es zwei Tregex:
+
+*eine spezielle, die das Muster sucht und jene Kinder des relevanten Baums, die nicht zum Muster gehören, wegschneidet
+*eine allgemeinere, die auch auf Bäume reagiert, die keine Kinder zuviel haben
+
+Zuerst wird versucht die speziellere Tregex anzuwenden, anschließend die allgemeinere. Dabei werden Fehler, wie zum Beispiel, dass sich keine Tregex anwenden lassen, obwohl ein Negationswort gefunden wurde, oder dass sich mehr als nur ein Tregex anwenden lässt mit geloggt. Wurden alle Negationswörter eines Satzes verarbeitet, wird ein NegationData Objekt zur Weiterverarbeitung zurückgegeben, das alle relevanten Informationen enthält.
