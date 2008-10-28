@@ -27,7 +27,7 @@ public class InformalNegationDetectionTestHTML {
         NegationData negData;
         NegationDetector detector = new AdverbNegationDetector();
         detector.init();
-        PerLineSentenceProvider provider = new PerLineSentenceProvider(new File("./sentences.txt"));
+        PerLineSentenceProvider provider = new PerLineSentenceProvider(new File("./brown_neg.txt"));
         provider.init();
         outputter = new HTMLOutputter();
         outputter.init();
