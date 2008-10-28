@@ -20,7 +20,8 @@
 .twoColFixLtHdr #mainContent { zoom: 1; }
 /* the above proprietary zoom property gives IE the hasLayout it needs to avoid several bugs */
 </style>
-<![endif]--></head>
+<![endif]-->
+</head>
 
 <body class="twoColFixLtHdr">
 
@@ -37,8 +38,16 @@
   <!-- end #sidebar1 --></div>
   <div id="mainContent">
     <h2 align="justify">Auswertung</h2>
-    <p align="justify">Auswertung<a href="http://nlp.stanford.edu/software/index.shtml" target="_blank"></a></p>
-    </div>
+    <p align="justify">Um die Funktionalität der Applikation zu testen, wurden die ersten 51 Sätze des Brown Corpus, in denen ein not oder ein n't vorkommt. Der Brown Corpus <a href="./referenzen.htm">[3]</a>, der im ganzen <em>Brown University Standard Corpus of Present-Day American English</em> genannt wird, wird im englischsprachigen Raum häufig für Studien in Sprachwissenschaften verwendet. </p>
+    <h3 align="justify">Evaluierungsmetriken</h3>
+    <p align="justify">Als Evaluierungsmetriken für die Negation Detection wurden <em>Precision</em> und <em>Recall</em> verwendet.</p>
+    <h4 align="justify">Precision</h4>
+    <p align="justify"><img src="precision.png" alt="Precision" width="154" height="69" /></p>
+    <p align="justify">Die Metrik Precision stellt die Anzahl der im Testkorpus enthaltenen Negationen und die als Negation erkannten plus die falsch erkannten Negationen gegenüber. </p>
+    <h4 align="justify">Recall</h4>
+    <p align="justify"><img src="recall.png" alt="Recall" width="154" height="69" /></p>
+    <p align="justify">Die Metrik Recall stellt die Anzahl der im Textkorpus enthaltenen Negationen und die als Negation erkannten plus die nicht als Negationen erkannten Phrasen, die aber negiert waren, gegenüber.</p>
+  </div>
 	<!-- This clearing element should immediately follow the #mainContent div in order to force the #container div to contain all child floats --><br class="clearfloat" />
   <div id="footer">
     <p>&copy; Andreas Bernauer 0627051, Jochen Goeritz 0627057, Dirk Wallerstorfer 0626775</p>
