@@ -1,9 +1,4 @@
-Einleitung
-Implementierung
-Auswertung
-Referenzen
-
-
+Implementierung:
 
 Das Herausfiltern von Adverbnegationen geschieht in mehreren Schritten:
 
@@ -21,3 +16,7 @@ Zuerst wird der Satz nach einem Negationswort durchsucht; dies geschieht mittels
 *eine allgemeinere, die auch auf Bäume reagiert, die keine Kinder zuviel haben
 
 Zuerst wird versucht die speziellere Tregex anzuwenden, anschließend die allgemeinere. Dabei werden Fehler, wie zum Beispiel, dass sich keine Tregex anwenden lassen, obwohl ein Negationswort gefunden wurde, oder dass sich mehr als nur ein Tregex anwenden lässt mit geloggt. Wurden alle Negationswörter eines Satzes verarbeitet, wird ein NegationData Objekt zur Weiterverarbeitung zurückgegeben, das alle relevanten Informationen enthält.
+
+Auswertung:
+
+ersten 51 Sätze mit "not" oda "n't" vom brown corpus
