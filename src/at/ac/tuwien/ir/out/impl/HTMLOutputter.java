@@ -47,7 +47,7 @@ public class HTMLOutputter
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(fileLocation)));
             out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n");
-            out.write("<html>\n<head><title>NegationDetection</title></head>\n<body bgcolor=\"lightgrey\">\n");
+            out.write("<html>\n<head><title>NegationDetection</title></head>\n<body bgcolor=\"lightgrey\" style=\"font:10pt Verdana\">\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
