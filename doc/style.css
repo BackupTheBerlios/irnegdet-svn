@@ -35,6 +35,20 @@ body  {
 	margin: 10px 0 10px 250px; /* the left margin on this div element creates the column down the left side of the page - no matter how much content the sidebar1 div contains, the column space will remain. You can remove this margin if you want the #mainContent div's text to fill the #sidebar1 space when the content in #sidebar1 ends. */
 	padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
 } 
+.twoColFixLtHdr #mainContent h2 { 
+	font-size: 20px;
+	font-weight: bold;
+}
+.twoColFixLtHdr #mainContent h3 { 
+	font-size: 16px;
+	font-weight: bold;
+	padding-top: 10px;
+}
+.twoColFixLtHdr #mainContent h4 { 
+	font-size: 13px;
+	font-weight: bold;
+	padding-bottom: -10px;
+}
 .twoColFixLtHdr #footer { 
 	padding: 0 10px 0 20px; /* this padding matches the left alignment of the elements in the divs that appear above it. */
 	background:#DDDDDD; 

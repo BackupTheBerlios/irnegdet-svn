@@ -38,7 +38,8 @@
   <!-- end #sidebar1 --></div>
   <div id="mainContent">
     <h2 align="justify">Auswertung</h2>
-    <p align="justify">Um die Funktionalität der Applikation zu testen, wurden die ersten 51 Sätze des Brown Corpus, in denen ein not oder ein n't vorkommt. Der Brown Corpus <a href="./referenzen.htm">[3]</a>, der im ganzen <em>Brown University Standard Corpus of Present-Day American English</em> genannt wird, wird im englischsprachigen Raum häufig für Studien in Sprachwissenschaften verwendet. </p>
+    <p align="justify">Als Training- und Validation-Set diente eine Sammlung von willkürlich gewählten Sätzen <a href="./referenzen.htm">[6]</a>, die den Anforderungen entsprechende Form hatten. Um die Funktionalität der Applikation zu testen, wurden die ersten 51 Sätze des Brown Corpus, in denen ein not oder ein n't vorkommt (Testset). Der Brown Corpus <a href="./referenzen.htm">[3]</a>, der im ganzen <em>Brown University Standard Corpus of Present-Day American English</em> genannt wird, wird im englischsprachigen Raum häufig für Studien in Sprachwissenschaften verwendet.<br />
+    </p>
     <h3 align="justify">Evaluierungsmetriken</h3>
     <p align="justify">Als Evaluierungsmetriken für die Negation Detection wurden <em>Precision</em> und <em>Recall</em> verwendet.</p>
     <h4 align="justify">Precision</h4>
@@ -47,8 +48,35 @@
     <h4 align="justify">Recall</h4>
     <p align="justify"><img src="recall.png" alt="Recall" width="154" height="69" /></p>
     <p align="justify">Die Metrik Recall stellt die Anzahl der im Textkorpus enthaltenen Negationen und die als Negation erkannten plus die nicht als Negationen erkannten Phrasen, die aber negiert waren, gegenüber.</p>
-    <p align="justify">Evaluierung</p>
-  </div>
+    <h3 align="justify">Definitionen</h3>
+    <p align="justify">Um die Evaluierung nachvollziehen zu können werden vorab folgende Begriffe definiert:</p>
+    <h4 align="justify">Expert Judgement (EJ)</h4>
+    <p align="justify">Als Expert Judgement dient die manuelle Auswertung des Testkorpus bezüglich vorkommender Adverbnegationen.</p>
+    <h4 align="justify">True Positive (TP)</h4>
+    <p align="justify">Wenn <em>Negation Signal</em>, <em>Negation Pattern</em> und <em>Negated Phrase</em> im Vergleich zum EJ richtig erkannt worden sind, handelt es sich um ein TP. Dabei geht es nicht um wortwörtliche Übereinstimmung, sondern um sinnhafte Übereinstimmung.</p>
+    <h4 align="justify">False Positive (FP)</h4>
+    <p align="justify">Wenn ein <em>Negation Signal</em>, ein <em>Negation Pattern</em> oder eine <em>Negated Phrase</em> gefunden wird, obwohl keine Adverbnegation vorkommt, handelt es sich um ein FP. Des Weiteren handelt es sich um ein FP, wenn das Negation Signal richtig erkannt wird, <em>Negation Pattern</em> und/oder <em>Negated Phrase</em> aber nicht sinngemäß mit dem EJ übereinstimmen.</p>
+    <h4 align="justify">True Negative (TN)</h4>
+    <p align="justify">Wenn in einem Satz keine Adverbnegation vorhanden und die Applikation auch kein <em>Negation Signal</em> erkennt, handelt es sich um ein TN.</p>
+    <h4 align="justify">False Negative (FN)</h4>
+    <p align="justify">Wenn in einem Satz eine Adverbnegation vorhanden ist und die Applikation kein <em>Negation Signal</em> erkennt, handelt es sich um ein FN. </p>
+    <h3 align="justify">Evaluierung</h3>
+    <p align="justify">In den 51 Sätzen des Testkorpus liegen laut EJ 52 Adverbnegation vor und es gibt vier Sätze, in denen keine Adverbnegation vorkommt. Das bedeuetet, dass idealerweise 52 TP und 4 TN erkannt werden.</p>
+    <p align="justify">Nach dem Vergleich des Outputs der Applikation mit dem EJ ergeben sich folgenden Werte:</p>
+    <ul>
+      <li>42 TP</li>
+      <li>9 FP</li>
+      <li>3 TN</li>
+      <li>5 FN</li>
+    </ul>
+    <p>Daraus lassen sich die zuvor erwähnten Metriken ableiten:</p>
+    <ul>
+      <li><strong>Precision </strong>~0,824</li>
+      <li><strong>Recall </strong>~0,894</li>
+    </ul>
+    <p align="justify">Für eine Interpretation dieser Ergebnisse würde man Vergleichswerte von anderen Applikationen heranziehen. Aufgrund der beschräkten Funktionalität der Applikation, lassen sich keine Parallelen zu anderen Applikationen herstellen. Des Weiteren lässt sich aufgrund der Größe des verwendeten Testsets keine vergleichende Interpretation durchführen. Dafür müsste das Testset um ein Vielfaches vergrößert werden, was im Zuge dieses Projekts den Rahmen gesprengt hätte.</p>
+    <p align="justify">Wir sind jedoch mit der Leistung der Applikation zufrieden, da diese doch den Großteil der Adverbnegationen in den Auszügen des Brown Corpus erkannt hat.</p>
+    </div>
 	<!-- This clearing element should immediately follow the #mainContent div in order to force the #container div to contain all child floats --><br class="clearfloat" />
   <div id="footer">
     <p>&copy; Andreas Bernauer 0627051, Jochen Goeritz 0627057, Dirk Wallerstorfer 0626775</p>
